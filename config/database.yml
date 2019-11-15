@@ -1,0 +1,21 @@
+# PostgreSQL. Versions 9.3 and up are supported.
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # https://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: pizza_rat_development
+
+test:
+  <<: *default
+  database: pizza_rat_test
+
+production:
+  <<: *default
+  database: pizza_rat_production
+  username: pizza_rat
+  password: <%= ENV['PIZZA_RAT_DATABASE_PASSWORD'] %>
