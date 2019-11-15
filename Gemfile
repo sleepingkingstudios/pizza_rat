@@ -26,6 +26,20 @@ group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
+
+  # Run commands to aggregate CI steps, generate templated files, etc.
+  gem 'sleeping_king_studios-tasks', '~> 0.2'
+end
+
+group :test do
+  gem 'rspec', '~> 3.9'
+  gem 'rspec-rails', '~> 3.9'
+  gem 'rspec-sleeping_king_studios', '~> 2.5', '>= 2.5.1'
+
+  gem 'rubocop', '~> 0.76.0'
+  gem 'rubocop-rspec', '~> 1.36.0'
+
+  gem 'simplecov', '~> 0.17'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

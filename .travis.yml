@@ -1,0 +1,19 @@
+# Build Options
+language: ruby
+rvm: 2.6.5
+install:
+  - bundle install
+before_script:
+  - cp .rspec.example .rspec
+  - cp .rubocop.example .rubocop
+  - bundle exec rake db:setup
+  - bundle exec rake db:test:prepare
+script:
+  - bundle exec thor ci:steps
+
+# Travis-CI Configuration
+sudo: false # Enable containerized builds.
+cache:
+  bundler: true
+addons:
+  postgresql: 9.6
