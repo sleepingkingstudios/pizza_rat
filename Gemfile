@@ -32,6 +32,7 @@ group :development do
 end
 
 group :test do
+  gem 'rails-controller-testing', '~> 1.0'
   gem 'rspec', '~> 3.9'
   gem 'rspec-rails', '~> 3.9'
   gem 'rspec-sleeping_king_studios', '~> 2.5', '>= 2.5.1'

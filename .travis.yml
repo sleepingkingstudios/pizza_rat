@@ -3,11 +3,16 @@ language: ruby
 rvm: 2.6.5
 install:
   - bundle install
+  - nvm install 12.13.0
+  - node -v
+  - npm i -g yarn
+  - yarn install
 before_script:
   - cp .rspec.example .rspec
   - cp .rubocop.example .rubocop
   - bundle exec rake db:setup
   - bundle exec rake db:test:prepare
+  - bin/webpack
 script:
   - bundle exec thor ci:steps
 
@@ -15,5 +20,6 @@ script:
 sudo: false # Enable containerized builds.
 cache:
   bundler: true
+  yarn: true
 addons:
   postgresql: 9.6
