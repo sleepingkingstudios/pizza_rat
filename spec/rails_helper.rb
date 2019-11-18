@@ -13,8 +13,10 @@ if Rails.env.production?
   # :nocov:
 end
 
-require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
+require 'rspec/rails'
+
+require 'support/factory_bot'
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.

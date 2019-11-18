@@ -16,6 +16,7 @@ Layout/AlignHash:
 
 Metrics/BlockLength:
   Exclude:
+    - 'spec/support/factories/*_factories.rb'
     - 'spec/**/*_spec.rb'
 
 Metrics/LineLength:
