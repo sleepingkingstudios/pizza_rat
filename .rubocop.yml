@@ -3,7 +3,12 @@ AllCops:
   Exclude:
     - 'bin/**/*'
     - 'db/schema.rb'
+    - 'lib/tasks/auto_annotate_models.rake'
     - 'node_modules/**/*'
+
+Layout/AlignArguments:
+  EnforcedStyle: with_fixed_indentation
+  IndentationWidth: ~
 
 Layout/AlignHash:
   EnforcedColonStyle: table
@@ -17,5 +22,14 @@ Metrics/LineLength:
   IgnoredPatterns:
     - '\A\s*#'
 
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/*.rb'
+
 Style/ClassAndModuleChildren:
   Enabled: false
+
+Style/Documentation:
+  Exclude:
+    - 'db/migrate/*.rb'
+    - 'spec/**/*.rb'

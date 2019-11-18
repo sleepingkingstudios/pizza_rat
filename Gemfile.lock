@@ -56,6 +56,9 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
       zeitwerk (~> 2.2)
+    annotate (3.0.3)
+      activerecord (>= 3.2, < 7.0)
+      rake (>= 10.4, < 14.0)
     ast (2.4.0)
     bcrypt (3.1.13)
     bindex (0.8.1)
@@ -216,6 +219,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  annotate (~> 3.0)
   bcrypt (~> 3.1.7)
   byebug
   listen (>= 3.0.5, < 3.2)
