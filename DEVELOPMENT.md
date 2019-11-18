@@ -9,6 +9,7 @@
     CONTACTED_BY_COMPANY:   'contacted_by_company',
     CONTACTED_BY_RECRUITER: 'contacted_by_recruiter',
     DID_NOT_APPLY:          'did_not_apply',
+    DID_NOT_CONTINUE:       'did_not_continue',
     INTERVIEW_COMPLETED:    'interview_completed',
     INTERVIEW_SCHEDULED:    'interview_scheduled',
     LISTING_WITHDRAWN:      'listing_withdrawn',

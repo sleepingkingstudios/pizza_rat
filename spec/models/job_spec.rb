@@ -25,7 +25,7 @@ RSpec.describe Job, type: :model do
       notes:              'BYO-Biohazard Suit',
       source:             'PlayStation',
       source_data:        { 'publisher' => 'Capcom' },
-      time_period:        '2019-11',
+      time_period:        '2020-01',
       title:              'Test Subject'
     }
   end
