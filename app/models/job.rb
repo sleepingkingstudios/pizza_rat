@@ -7,13 +7,26 @@ require 'sleeping_king_studios/tools/toolbox/constant_map'
 # through Applied and Interviewing (if applicable) and finally to Closed.
 class Job < ApplicationRecord
   ApplicationStatuses = SleepingKingStudios::Tools::Toolbox::ConstantMap.new(
-    PROSPECT:     'prospect',
     APPLIED:      'applied',
+    CLOSED:       'closed',
     INTERVIEWING: 'interviewing',
-    CLOSED:       'closed'
+    PROSPECT:     'prospect'
   ).freeze
 
   TIME_PERIOD_FORMAT = /\A\d{4}-\d{2}\z/.freeze
+  private_constant :TIME_PERIOD_FORMAT
+
+  scope :applied,
+    -> { where(application_status: ApplicationStatuses::APPLIED) }
+
+  scope :closed,
+    -> { where(application_status: ApplicationStatuses::CLOSED) }
+
+  scope :interviewing,
+    -> { where(application_status: ApplicationStatuses::INTERVIEWING) }
+
+  scope :prospects,
+    -> { where(application_status: ApplicationStatuses::PROSPECT) }
 
   ### Attributes
   attribute :application_status, :string, default: ApplicationStatuses::PROSPECT
@@ -73,4 +86,10 @@ end
 #  title              :string           default(""), not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#
+# Indexes
+#
+#  index_jobs_on_action_required_and_company_name     (action_required,company_name)
+#  index_jobs_on_application_status_and_company_name  (application_status,company_name)
+#  index_jobs_on_company_name                         (company_name)
 #

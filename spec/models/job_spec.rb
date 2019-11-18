@@ -74,6 +74,104 @@ RSpec.describe Job, type: :model do
     end
   end
 
+  describe '.applied' do
+    it { expect(described_class).to respond_to(:applied).with(0).arguments }
+
+    it { expect(described_class.applied).to be_a ActiveRecord::Relation }
+
+    it { expect(described_class.applied).to be == [] }
+
+    context 'when there are many jobs' do
+      let(:expected) do
+        Array.new(3) { FactoryBot.build(:job, :applied) }
+      end
+
+      before(:example) do
+        expected.each(&:save!)
+
+        FactoryBot.create(:job, :closed)
+        FactoryBot.create(:job, :interviewing)
+        FactoryBot.create(:job, :prospect)
+      end
+
+      it { expect(described_class.applied).to be == expected }
+    end
+  end
+
+  describe '.closed' do
+    it { expect(described_class).to respond_to(:closed).with(0).arguments }
+
+    it { expect(described_class.closed).to be_a ActiveRecord::Relation }
+
+    it { expect(described_class.closed).to be == [] }
+
+    context 'when there are many jobs' do
+      let(:expected) do
+        Array.new(3) { FactoryBot.build(:job, :closed) }
+      end
+
+      before(:example) do
+        expected.each(&:save!)
+
+        FactoryBot.create(:job, :applied)
+        FactoryBot.create(:job, :interviewing)
+        FactoryBot.create(:job, :prospect)
+      end
+
+      it { expect(described_class.closed).to be == expected }
+    end
+  end
+
+  describe '.interviewing' do
+    it 'should define the scope' do
+      expect(described_class).to respond_to(:interviewing).with(0).arguments
+    end
+
+    it { expect(described_class.interviewing).to be_a ActiveRecord::Relation }
+
+    it { expect(described_class.interviewing).to be == [] }
+
+    context 'when there are many jobs' do
+      let(:expected) do
+        Array.new(3) { FactoryBot.build(:job, :interviewing) }
+      end
+
+      before(:example) do
+        expected.each(&:save!)
+
+        FactoryBot.create(:job, :applied)
+        FactoryBot.create(:job, :closed)
+        FactoryBot.create(:job, :prospect)
+      end
+
+      it { expect(described_class.interviewing).to be == expected }
+    end
+  end
+
+  describe '.prospects' do
+    it { expect(described_class).to respond_to(:prospects).with(0).arguments }
+
+    it { expect(described_class.prospects).to be_a ActiveRecord::Relation }
+
+    it { expect(described_class.prospects).to be == [] }
+
+    context 'when there are many jobs' do
+      let(:expected) do
+        Array.new(3) { FactoryBot.build(:job, :prospect) }
+      end
+
+      before(:example) do
+        expected.each(&:save!)
+
+        FactoryBot.create(:job, :applied)
+        FactoryBot.create(:job, :closed)
+        FactoryBot.create(:job, :interviewing)
+      end
+
+      it { expect(described_class.prospects).to be == expected }
+    end
+  end
+
   describe '#action_required' do
     include_examples 'should have attribute', :action_required, default: true
   end
