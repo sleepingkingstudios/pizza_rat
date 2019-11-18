@@ -1,9 +1,18 @@
+require:
+  - rubocop-rspec
+  - ./spec/support/rubocop_patch
+
 AllCops:
   TargetRubyVersion: 2.6
   Exclude:
     - 'bin/**/*'
     - 'db/schema.rb'
+    - 'lib/tasks/auto_annotate_models.rake'
     - 'node_modules/**/*'
+
+Layout/AlignArguments:
+  EnforcedStyle: with_fixed_indentation
+  IndentationWidth: ~
 
 Layout/AlignHash:
   EnforcedColonStyle: table
@@ -11,11 +20,35 @@ Layout/AlignHash:
 
 Metrics/BlockLength:
   Exclude:
+    - 'spec/support/factories/*_factories.rb'
+    - 'spec/support/**/*_examples.rb'
     - 'spec/**/*_spec.rb'
 
 Metrics/LineLength:
   IgnoredPatterns:
     - '\A\s*#'
 
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/*.rb'
+
+RSpec/ExampleWording:
+  Enabled: false
+
+RSpec/HookArgument:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 4
+
 Style/ClassAndModuleChildren:
   Enabled: false
+
+Style/Documentation:
+  Exclude:
+    - 'db/migrate/*.rb'
+    - 'spec/**/*.rb'
+
+Style/NestedParenthesizedCalls:
+  Exclude:
+    - 'spec/**/*'

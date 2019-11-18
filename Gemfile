@@ -8,6 +8,7 @@ ruby '2.6.5'
 
 gem 'rails', '~> 6.0.1'
 
+gem 'annotate', '~> 3.0' # https://github.com/ctran/annotate_models
 gem 'bcrypt', '~> 3.1.7'
 gem 'pg', '>= 0.18', '< 2.0' # Use postgresql as the database for Active Record
 
@@ -23,6 +24,9 @@ group :development, :test do
 end
 
 group :development do
+  gem 'factory_bot', '~> 5.1'
+  gem 'factory_bot_rails', '~> 5.1'
+
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
