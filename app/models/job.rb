@@ -47,17 +47,17 @@ class Job < ApplicationRecord
     presence: true
   validates :time_period_month,
     numericality: {
-      if:                       -> { time_period_month.present? },
       greater_than_or_equal_to: 1,
       less_than_or_equal_to:    12,
-      only_integer:             true
+      only_integer:             true,
+      unless:                   -> { errors.key?(:time_period) }
     }
   validates :time_period_year,
     numericality: {
-      if:           -> { time_period_year.present? },
       greater_than: 2009,
       less_than:    2030,
-      only_integer: true
+      only_integer: true,
+      unless:       -> { errors.key?(:time_period) }
     }
 
   def time_period_month
