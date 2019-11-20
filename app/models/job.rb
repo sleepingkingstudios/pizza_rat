@@ -2,6 +2,8 @@
 
 require 'sleeping_king_studios/tools/toolbox/constant_map'
 
+require 'operations/records/factory'
+
 # A Job represents a job listing from a company and the corresponding
 # application, if any. It tracks the status of the application from Prospect
 # through Applied and Interviewing (if applicable) and finally to Closed.
@@ -12,6 +14,8 @@ class Job < ApplicationRecord
     INTERVIEWING: 'interviewing',
     PROSPECT:     'prospect'
   ).freeze
+
+  Factory = Operations::Records::Factory.new(self)
 
   TIME_PERIOD_FORMAT = /\A\d{4}-\d{2}\z/.freeze
   private_constant :TIME_PERIOD_FORMAT

@@ -74,6 +74,14 @@ RSpec.describe Job, type: :model do
     end
   end
 
+  describe '::Factory' do
+    include_examples 'should define constant',
+      :Factory,
+      -> { be_a Operations::Records::Factory }
+
+    it { expect(described_class::Factory.record_class).to be described_class }
+  end
+
   describe '.applied' do
     it { expect(described_class).to respond_to(:applied).with(0).arguments }
 
