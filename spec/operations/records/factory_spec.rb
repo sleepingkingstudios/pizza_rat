@@ -14,14 +14,61 @@ RSpec.describe Operations::Records::Factory do
   let(:record_class) { Job }
 
   describe '::new' do
+    let(:error_message) do
+      'record class must be a non-abstract ActiveRecord class'
+    end
+
     it { expect(described_class).to be_constructible.with(1).argument }
+
+    describe 'with nil' do
+      it 'should raise an error' do
+        expect { described_class.new nil }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with an object' do
+      it 'should raise an error' do
+        expect { described_class.new Object.new.freeze }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with a class' do
+      it 'should raise an error' do
+        expect { described_class.new String }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with an abstract record class' do
+      it 'should raise an error' do
+        expect { described_class.new ApplicationRecord }
+          .to raise_error ArgumentError, error_message
+      end
+    end
   end
 
   describe '::for' do
+    let(:error_message) do
+      'record class must be a non-abstract ActiveRecord class'
+    end
+
     it { expect(described_class).to respond_to(:for).with(1).argument }
 
+    describe 'with nil' do
+      it 'should raise an error' do
+        expect { described_class.for nil }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
     describe 'with the name of a record class that does not define a factory' do
-      let(:record_class) { ApplicationRecord }
+      let(:record_class) { Spec::Role }
+
+      example_class 'Spec::Role', ApplicationRecord do |klass|
+        klass.table_name = 'jobs'
+      end
 
       it 'should return an instance of the base factory class' do
         expect(described_class.for record_class.name).to be_a described_class
@@ -43,7 +90,11 @@ RSpec.describe Operations::Records::Factory do
     end
 
     describe 'with a record class that does not define a factory' do
-      let(:record_class) { ApplicationRecord }
+      let(:record_class) { Spec::Role }
+
+      example_class 'Spec::Role', ApplicationRecord do |klass|
+        klass.table_name = 'jobs'
+      end
 
       it 'should return an instance of the base factory class' do
         expect(described_class.for record_class).to be_a described_class

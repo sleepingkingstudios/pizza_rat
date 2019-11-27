@@ -19,12 +19,14 @@ module Operations::Records
     def self.for(record_class)
       record_class = record_class.constantize if record_class.is_a?(String)
 
-      return record_class::Factory if record_class.const_defined?(:Factory)
+      return record_class::Factory if record_class&.const_defined?(:Factory)
 
       new(record_class)
     end
 
     def initialize(record_class)
+      validate_record_class(record_class)
+
       @record_class = record_class
     end
 
@@ -64,6 +66,18 @@ module Operations::Records
 
     command_class(:update) do
       Operations::Records::Update.subclass(record_class)
+    end
+
+    private
+
+    def validate_record_class(record_class)
+      return if record_class.is_a?(Class) &&
+                record_class < ActiveRecord::Base &&
+                !record_class.abstract_class?
+
+      raise ArgumentError,
+        'record class must be a non-abstract ActiveRecord class',
+        caller[1..-1]
     end
   end
 end
