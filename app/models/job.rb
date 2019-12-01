@@ -35,7 +35,6 @@ class Job < ApplicationRecord
   ### Attributes
   attribute :application_status, :string, default: ApplicationStatuses::PROSPECT
   attribute :company_name,       :string, default: ''
-  attribute :source_url,         :string, default: ''
 
   ### Validations
   validates :application_status,
