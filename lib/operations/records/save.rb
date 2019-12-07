@@ -19,7 +19,7 @@ module Operations::Records
 
       error = Errors::FailedValidation.new(record: record)
 
-      failure(error)
+      Cuprum::Result.new(error: error, value: record)
     end
   end
 end

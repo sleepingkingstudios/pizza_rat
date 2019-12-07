@@ -28,7 +28,7 @@ class Resource
   end
 
   def operation_factory
-    Operations::Records::Factory.for(record_class)
+    @operation_factory ||= Operations::Records::Factory.for(record_class)
   end
 
   def show_path(record, **_options)
