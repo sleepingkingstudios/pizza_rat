@@ -58,6 +58,8 @@ module Responders
     def respond_to_failure(result)
       if result.error.is_a?(Errors::NotFound) && action != :index
         redirect_to(index_path)
+
+        return
       end
 
       render template_for(action), options_for_failing_result(result)

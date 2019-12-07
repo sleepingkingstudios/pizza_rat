@@ -1,0 +1,21 @@
+.jobs-table {
+  td.jobs-table-cell {
+    &.jobs-table-cell-application-status {
+      &.jobs-table-cell-application-status-applied {
+        color: blue;
+      }
+
+      &.jobs-table-cell-application-status-closed {
+        color: gray;
+      }
+
+      &.jobs-table-cell-application-status-interviewing {
+        color: green;
+      }
+
+      &.jobs-table-cell-application-status-prospect {
+        color: black;
+      }
+    }
+  }
+}

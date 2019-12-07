@@ -1,0 +1,9 @@
+<h1>Edit Job</h1>
+
+<%= render partial: 'jobs/form', locals: { data: data, error: error } %>
+
+<p>
+  <%= link_to "Back to #{data['job'].company_name}", job_path(data['job'].id) %>
+  |
+  <%= link_to 'Back To Jobs', jobs_path %>
+</p>

@@ -231,8 +231,8 @@ class ResourcesController < ApplicationController
     update_operation = operation_factory.update
 
     steps do
-      attributes = step :require_resource_params
       resource   = step find_operation.call(resource_id)
+      attributes = step :require_resource_params
 
       update_operation.call(resource, attributes)
     end

@@ -2,13 +2,23 @@
 
 require 'rails_helper'
 
-require 'operations/records/factory'
+require 'support/examples/resources_controller_examples'
 
-RSpec.describe ResourcesController do
+RSpec.describe ResourcesController, type: :controller do
+  include Spec::Support::Examples::ResourcesControllerExamples
+
   subject(:controller) { described_class.new }
 
   shared_context 'when the controller defines a resource' do
     let(:resource) { Resource.new(Job) }
+    let(:resource_params) do
+      {
+        'company_name' => 'Weyland-Yutani',
+        'source'       => '20th Century Fox',
+        'time_period'  => '2020-01',
+        'title'        => 'Freighter Crew'
+      }
+    end
     let(:permitted_attributes) do
       %w[company_name source time_period title]
     end
@@ -22,153 +32,6 @@ RSpec.describe ResourcesController do
         .to receive(:resource)
         .and_return(resource)
     end
-  end
-
-  shared_context 'with a params hash' do
-    let(:params) { {} }
-
-    before(:example) do
-      # rubocop:disable RSpec/SubjectStub
-      allow(controller).to receive(:params) do
-        ActionController::Parameters.new(params)
-      end
-      # rubocop:enable RSpec/SubjectStub
-    end
-  end
-
-  shared_examples 'should define action' \
-  do |action_name, collection: false, status: nil|
-    operation_name ||= :"#{action_name}_resource#{collection ? 's' : ''}"
-
-    describe "##{action_name}" do
-      include_context 'when the controller defines a resource'
-
-      let(:action) { action_name }
-
-      before(:example) do
-        allow(controller) # rubocop:disable RSpec/SubjectStub
-          .to receive(:action_name)
-          .and_return(action.to_s)
-      end
-
-      it { expect(controller).to respond_to(action_name).with(0).arguments }
-
-      include_examples 'should dispatch a response for',
-        operation_name,
-        status: status
-    end
-  end
-
-  shared_examples 'should dispatch a response for' \
-  do |operation_name, status: nil|
-    shared_examples 'should delegate to the responder' do
-      let(:resources)     { {} }
-      let(:responder)     { instance_double(Responders::Base, call: nil) }
-      let(operation_name) { instance_double(Cuprum::Operation) }
-      let(:expected_result) do
-        value = defined?(expected_value) ? expected_value : (result.value || {})
-
-        Cuprum::Result.new(
-          error:  result.error,
-          status: result.status,
-          value:  value
-        )
-      end
-      let(:expected_options) do
-        {
-          action: action,
-          status: status
-        }
-      end
-
-      before(:example) do
-        # rubocop:disable RSpec/SubjectStub
-        allow(controller).to receive(:resources).and_return(resources)
-
-        allow(controller).to receive(:responder).and_return(responder)
-
-        allow(controller).to receive(operation_name).and_return(result)
-        # rubocop:enable RSpec/SubjectStub
-      end
-
-      it 'should delegate to the responder' do
-        controller.send(action)
-
-        expect(responder)
-          .to have_received(:call)
-          .with(expected_result, expected_options)
-      end
-
-      context 'when the controller has resources' do
-        let(:resources) do
-          {
-            'interviews' => Array.new(3) { Spec::Interview.new },
-            'recruiter'  => Spec::Recruiter.new
-          }
-        end
-        let(:expected_value) do
-          value = defined?(super()) ? super() : (result.value || {})
-
-          resources.merge(value)
-        end
-
-        example_class 'Spec::Interview'
-
-        example_class 'Spec::Recruiter'
-
-        it 'should delegate to the responder' do
-          controller.send(action)
-
-          expect(responder)
-            .to have_received(:call)
-            .with(expected_result, expected_options)
-        end
-      end
-    end
-
-    context 'when the operation returns a result with an error' do
-      let(:error)  { Cuprum::Error.new(message: 'Something went wrong.') }
-      let(:result) { Cuprum::Result.new(error: error) }
-
-      include_examples 'should delegate to the responder'
-    end
-
-    context 'when the operation returns a result with an error and a value' do
-      let(:value)  { resource.record_class.new }
-      let(:error)  { Cuprum::Error.new(message: 'Something went wrong.') }
-      let(:result) { Cuprum::Result.new(error: error, value: value) }
-      let(:expected_value) do
-        { 'job' => value }
-      end
-
-      include_examples 'should delegate to the responder'
-    end
-
-    context 'when the operation returns a result with a value' do
-      let(:value)  { resource.record_class.new }
-      let(:result) { Cuprum::Result.new(value: value) }
-      let(:expected_value) do
-        { 'job' => value }
-      end
-
-      include_examples 'should delegate to the responder'
-    end
-
-    context 'when the operation returns a result with a value hash' do
-      let(:value)  { { 'job' => resource.record_class.new } }
-      let(:result) { Cuprum::Result.new(value: value) }
-
-      include_examples 'should delegate to the responder'
-    end
-  end
-
-  let(:resource_params) do
-    {
-      'company_name' => 'Weyland-Yutani',
-      'source'       => '20th Century Fox',
-      'time_period'  => '2020-01',
-      'title'        => 'Freighter Crew'
-    }
   end
 
   include_examples 'should define action', :create, status: :created
@@ -191,9 +54,9 @@ RSpec.describe ResourcesController do
 
     let(:params) { { resource.singular_name => resource_params } }
 
-    def a_job_with_expected_attributes
-      an_instance_of(Job)
-        .and(satisfy { |job| job.attributes >= resource_params })
+    def a_resource_with_expected_attributes
+      an_instance_of(resource.record_class || Object)
+        .and(satisfy { |obj| obj.attributes >= resource_params })
     end
 
     it 'should define the private method' do
@@ -217,7 +80,7 @@ RSpec.describe ResourcesController do
     it 'should return an instance of the resource' do
       expect(controller.send(:create_resource))
         .to be_a_passing_result
-        .with_value(a_job_with_expected_attributes)
+        .with_value(a_resource_with_expected_attributes)
     end
   end
 
@@ -235,8 +98,8 @@ RSpec.describe ResourcesController do
     include_context 'when the controller defines a resource'
     include_context 'with a params hash'
 
-    let(:job)    { FactoryBot.create(:job) }
-    let(:params) { { 'id' => job.id } }
+    let(:object) { FactoryBot.create(:job) }
+    let(:params) { { 'id' => object.id } }
 
     it 'should define the private method' do
       expect(controller)
@@ -247,19 +110,19 @@ RSpec.describe ResourcesController do
     it 'should call step operation_factory::FindOne' do
       expect { controller.send(:destroy_resource) }
         .to call_command_step(resource.operation_factory::FindOne)
-        .with_arguments(job.id)
+        .with_arguments(object.id)
     end
 
     it 'should call step operation_factory::Destroy' do
       expect { controller.send(:destroy_resource) }
         .to call_command_step(resource.operation_factory::Destroy)
-        .with_arguments(job)
+        .with_arguments(object)
     end
 
     it 'should return the instance of the resource' do
       expect(controller.send(:destroy_resource))
         .to be_a_passing_result
-        .with_value(job)
+        .with_value(object)
     end
   end
 
@@ -267,8 +130,8 @@ RSpec.describe ResourcesController do
     include_context 'when the controller defines a resource'
     include_context 'with a params hash'
 
-    let(:job)    { FactoryBot.create(:job) }
-    let(:params) { { 'id' => job.id } }
+    let(:object) { FactoryBot.create(:job) }
+    let(:params) { { 'id' => object.id } }
 
     it 'should define the private method' do
       expect(controller)
@@ -279,13 +142,13 @@ RSpec.describe ResourcesController do
     it 'should call step operation_factory::FindOne' do
       expect { controller.send(:edit_resource) }
         .to call_command_step(resource.operation_factory::FindOne)
-        .with_arguments(job.id)
+        .with_arguments(object.id)
     end
 
     it 'should return the instance of the resource' do
       expect(controller.send(:edit_resource))
         .to be_a_passing_result
-        .with_value(job)
+        .with_value(object)
     end
   end
 
@@ -397,13 +260,13 @@ RSpec.describe ResourcesController do
       end
     end
 
-    context 'when there are many jobs' do
-      let!(:jobs) { Array.new(3) { FactoryBot.create(:job) } }
+    context 'when there are many resources' do
+      let!(:objects) { Array.new(3) { FactoryBot.create(:job) } }
 
       it 'should return the matching resource instances' do
         expect(controller.send(:index_resources))
           .to be_a_passing_result
-          .with_value(contain_exactly(*jobs))
+          .with_value(contain_exactly(*objects))
       end
 
       context 'when params[:order] is set' do
@@ -425,7 +288,7 @@ RSpec.describe ResourcesController do
         it 'should return the matching resource instances' do
           expect(controller.send(:index_resources))
             .to be_a_passing_result
-            .with_value(jobs.sort_by(&:company_name))
+            .with_value(objects.sort_by(&:company_name))
         end
       end
     end
@@ -616,6 +479,18 @@ RSpec.describe ResourcesController do
     end
   end
 
+  describe '#resource' do
+    it 'should define the private method' do
+      expect(controller).to respond_to(:resource, true).with(0).arguments
+    end
+
+    it { expect(controller.send :resource).to be_a Resource }
+
+    it { expect(controller.send(:resource).name).to be == 'resource' }
+
+    it { expect(controller.send(:resource).record_class).to be nil }
+  end
+
   describe '#resource_id' do
     include_context 'with a params hash'
 
@@ -673,8 +548,8 @@ RSpec.describe ResourcesController do
     include_context 'when the controller defines a resource'
     include_context 'with a params hash'
 
-    let(:job)    { FactoryBot.create(:job) }
-    let(:params) { { 'id' => job.id } }
+    let(:object) { FactoryBot.create(:job) }
+    let(:params) { { 'id' => object.id } }
 
     it 'should define the private method' do
       expect(controller)
@@ -685,13 +560,13 @@ RSpec.describe ResourcesController do
     it 'should call step operation_factory::FindOne' do
       expect { controller.send(:show_resource) }
         .to call_command_step(resource.operation_factory::FindOne)
-        .with_arguments(job.id)
+        .with_arguments(object.id)
     end
 
-    it 'should return the instance of the resource' do
+    it 'should return the resource instance' do
       expect(controller.send(:show_resource))
         .to be_a_passing_result
-        .with_value(job)
+        .with_value(object)
     end
   end
 
@@ -714,14 +589,14 @@ RSpec.describe ResourcesController do
     include_context 'when the controller defines a resource'
     include_context 'with a params hash'
 
-    let(:job) { FactoryBot.create(:job) }
+    let(:object) { FactoryBot.create(:job) }
     let(:params) do
-      { 'id' => job.id, resource.singular_name => resource_params }
+      { 'id' => object.id, resource.singular_name => resource_params }
     end
 
-    def the_job_with_updated_attributes
+    def the_resource_with_updated_attributes
       an_instance_of(Job)
-        .and(satisfy { |obj| obj.id == job.id })
+        .and(satisfy { |obj| obj.id == object.id })
         .and(satisfy { |obj| obj.attributes >= resource_params })
     end
 
@@ -740,19 +615,19 @@ RSpec.describe ResourcesController do
     it 'should call step operation_factory::FindOne' do
       expect { controller.send(:update_resource) }
         .to call_command_step(resource.operation_factory::FindOne)
-        .with_arguments(job.id)
+        .with_arguments(object.id)
     end
 
     it 'should call step operation_factory::Update' do
       expect { controller.send(:update_resource) }
         .to call_command_step(resource.operation_factory::Update)
-        .with_arguments(job, resource_params)
+        .with_arguments(object, resource_params)
     end
 
     it 'should return the instance of the resource' do
       expect(controller.send(:update_resource))
         .to be_a_passing_result
-        .with_value(the_job_with_updated_attributes)
+        .with_value(the_resource_with_updated_attributes)
     end
   end
 end

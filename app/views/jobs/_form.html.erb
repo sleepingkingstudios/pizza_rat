@@ -1,0 +1,44 @@
+<% job = data['job'] %>
+
+<%= form_with model: job, scope: :job, local: true do |form| %>
+  <% if job.errors.any? %>
+    <div class="form-errors job-form-errors">
+      <h3>Unable to <%= job.persisted? ? "update" : "create" %> Job</h3>
+
+      <ul class="form-errors-list">
+        <% job.errors.full_messages.each do |message| %>
+          <li class="form-errors-list-item"><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <p>
+    <%= form.label :time_period, 'Time Period' %>
+    <%= form.text_field :time_period %>
+  </p>
+
+  <p>
+    <%= form.label :company_name, 'Company Name' %>
+    <%= form.text_field :company_name %>
+  </p>
+
+  <p>
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </p>
+
+  <p>
+    <%= form.label :source %>
+    <%= form.text_field :source %>
+  </p>
+
+  <p>
+    <%= form.label :notes %>
+    <%= form.text_area :notes, rows: 5 %>
+  </p>
+
+  <p>
+    <%= form.submit %>
+  </p>
+<% end %>

@@ -1,0 +1,34 @@
+<% job = data['job'] %>
+
+<h1>
+  <%= job.company_name %>
+  <% if job.title.present? %>
+    <small><%= job.title %></small>
+  <% end %>
+</h1>
+
+<p>
+  <%= link_to 'Edit Job', edit_job_path(data['job'].id) %>
+  |
+  <%= link_to 'Delete Job', job_path(data['job'].id), method: :delete, data: { confirm: 'Are you sure?' } %>
+</p>
+
+<p>
+  <strong>Source:</strong>
+  <%= job.source %>
+</p>
+
+<p>
+  <strong>Time Period:</strong>
+  <%= job.time_period %>
+</p>
+
+<% if job.notes.present? %>
+  <p><strong>Notes:</strong></p>
+
+  <% job.notes.split(/(\r?\n){2,}/).each do |paragraph| %>
+    <p><%= paragraph.gsub(/\r?\n/, '') %></p>
+  <% end %>
+<% end %>
+
+<p><%= link_to 'Back To Jobs', jobs_path %></p>
