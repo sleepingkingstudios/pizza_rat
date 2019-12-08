@@ -12,6 +12,9 @@ require 'byebug'
 # Isolated namespace for defining spec-only or transient objects.
 module Spec; end
 
+require 'support/matchers/call_command_step'
+require 'support/matchers/have_result'
+
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   config.extend  RSpec::SleepingKingStudios::Concerns::ExampleConstants

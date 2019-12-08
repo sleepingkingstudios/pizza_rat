@@ -1,0 +1,15 @@
+@import "bourbon/bourbon";
+@import "base/base";
+
+@import "forms";
+@import "text";
+
+@import "jobs";
+
+body {
+  margin: 0 auto;
+  padding: 1em;
+  max-width: 60em;
+
+  font-family: $font-stack-helvetica;
+}

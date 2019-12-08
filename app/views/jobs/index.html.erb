@@ -1,0 +1,7 @@
+<h1>Jobs</h1>
+
+<p>
+  <%= link_to 'New Job', new_job_path %>
+</p>
+
+<%= render partial: 'jobs/table', locals: { data: data } %>

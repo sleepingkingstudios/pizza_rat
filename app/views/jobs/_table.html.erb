@@ -1,0 +1,42 @@
+<table class="jobs-table">
+  <thead>
+    <tr>
+      <td>Status</td>
+      <td>Company Name</td>
+      <td>Title</td>
+      <td>Source</td>
+      <td>&nbsp;</td>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% if data['jobs'].blank? %>
+      <tr>
+        <td>colspan="5">There are no jobs defined.</td>
+      </tr>
+    <% end %>
+
+    <% data['jobs'].each do |job| %>
+      <tr>
+        <% status_class = "jobs-table-cell-application-status-#{job.application_status.underscore.tr('_', '-')}" %>
+        <td class="<%= "jobs-table-cell jobs-table-cell-application-status #{status_class}" %>">
+          <%= job.application_status.capitalize %>
+        </td>
+        <td><%= job.company_name %></td>
+        <td>
+          <% if job.title.present? %>
+            <%= job.title %>
+          <% else %>
+            <span class="text-muted">No Title</span>
+          <% end %>
+        </td>
+        <td><%= job.source %></td>
+        <td>
+          <%= link_to 'Show',   job_path(job) %>
+          <%= link_to 'Edit',   edit_job_path(job) %>
+          <%= link_to 'Delete', job_path(job), method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

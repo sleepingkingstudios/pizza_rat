@@ -2,6 +2,8 @@
 
 require 'sleeping_king_studios/tools/toolbox/constant_map'
 
+require 'operations/records/factory'
+
 # A Job represents a job listing from a company and the corresponding
 # application, if any. It tracks the status of the application from Prospect
 # through Applied and Interviewing (if applicable) and finally to Closed.
@@ -12,6 +14,8 @@ class Job < ApplicationRecord
     INTERVIEWING: 'interviewing',
     PROSPECT:     'prospect'
   ).freeze
+
+  Factory = Operations::Records::Factory.new(self)
 
   TIME_PERIOD_FORMAT = /\A\d{4}-\d{2}\z/.freeze
   private_constant :TIME_PERIOD_FORMAT
@@ -31,7 +35,6 @@ class Job < ApplicationRecord
   ### Attributes
   attribute :application_status, :string, default: ApplicationStatuses::PROSPECT
   attribute :company_name,       :string, default: ''
-  attribute :source_url,         :string, default: ''
 
   ### Validations
   validates :application_status,
@@ -47,17 +50,17 @@ class Job < ApplicationRecord
     presence: true
   validates :time_period_month,
     numericality: {
-      if:                       -> { time_period_month.present? },
       greater_than_or_equal_to: 1,
       less_than_or_equal_to:    12,
-      only_integer:             true
+      only_integer:             true,
+      unless:                   -> { errors.key?(:time_period) }
     }
   validates :time_period_year,
     numericality: {
-      if:           -> { time_period_year.present? },
       greater_than: 2009,
       less_than:    2030,
-      only_integer: true
+      only_integer: true,
+      unless:       -> { errors.key?(:time_period) }
     }
 
   def time_period_month
