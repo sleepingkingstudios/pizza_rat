@@ -19,7 +19,7 @@ RSpec.describe Resource do
 
   subject(:resource) { described_class.new(record_class, **options) }
 
-  let(:record_class) { Job }
+  let(:record_class) { Spec::Manufacturer }
   let(:options)      { {} }
 
   describe '.new' do
@@ -103,7 +103,7 @@ RSpec.describe Resource do
         .and_any_keywords
     end
 
-    it { expect(resource.index_path).to be == '/jobs' }
+    it { expect(resource.index_path).to be == '/manufacturers' }
 
     wrap_context 'when the name is specified' do
       it { expect(resource.index_path).to be == "/#{expected_name.pluralize}" }
@@ -121,7 +121,7 @@ RSpec.describe Resource do
       let(:record_class) { Spec::Role }
 
       example_class 'Spec::Role', ApplicationRecord do |klass|
-        klass.table_name = 'jobs'
+        klass.table_name = 'manufacturers'
       end
 
       it 'should return a factory' do
@@ -154,7 +154,7 @@ RSpec.describe Resource do
   end
 
   describe '#name' do
-    include_examples 'should have reader', :name, 'job'
+    include_examples 'should have reader', :name, 'manufacturer'
 
     wrap_context 'when the name is specified' do
       it { expect(resource.name).to be == expected_name }
@@ -162,13 +162,13 @@ RSpec.describe Resource do
       context 'when the name is nil' do
         let(:options) { super().merge(name: nil) }
 
-        it { expect(resource.name).to be == 'job' }
+        it { expect(resource.name).to be == 'manufacturer' }
       end
 
       context 'when the name is an empty string' do
         let(:options) { super().merge(name: '') }
 
-        it { expect(resource.name).to be == 'job' }
+        it { expect(resource.name).to be == 'manufacturer' }
       end
 
       context 'when the name is a capitalized string' do
@@ -190,7 +190,7 @@ RSpec.describe Resource do
   end
 
   describe '#plural_name' do
-    include_examples 'should have reader', :plural_name, 'jobs'
+    include_examples 'should have reader', :plural_name, 'manufacturers'
 
     wrap_context 'when the name is specified' do
       it { expect(resource.plural_name).to be == expected_name.pluralize }
@@ -210,7 +210,7 @@ RSpec.describe Resource do
       context 'when the plural name is nil' do
         let(:options) { super().merge(plural_name: nil) }
 
-        it { expect(resource.plural_name).to be == 'jobs' }
+        it { expect(resource.plural_name).to be == 'manufacturers' }
       end
 
       context 'when the plural name is a capitalized string' do
@@ -248,7 +248,7 @@ RSpec.describe Resource do
   end
 
   describe '#show_path' do
-    let(:record) { FactoryBot.create(:job) }
+    let(:record) { FactoryBot.create(:manufacturer) }
 
     it 'should define the method' do
       expect(resource)
@@ -257,7 +257,9 @@ RSpec.describe Resource do
         .and_any_keywords
     end
 
-    it { expect(resource.show_path(record)).to be == "/jobs/#{record.id}" }
+    it 'should return the show path' do
+      expect(resource.show_path(record)).to be == "/manufacturers/#{record.id}"
+    end
 
     wrap_context 'when the name is specified' do
       it 'should return the show path' do
@@ -277,7 +279,7 @@ RSpec.describe Resource do
   end
 
   describe '#singular_name' do
-    include_examples 'should have reader', :singular_name, 'job'
+    include_examples 'should have reader', :singular_name, 'manufacturer'
 
     wrap_context 'when the name is specified' do
       it { expect(resource.singular_name).to be == expected_name.singularize }
@@ -297,7 +299,7 @@ RSpec.describe Resource do
       context 'when the singular name is nil' do
         let(:options) { super().merge(singular_name: nil) }
 
-        it { expect(resource.singular_name).to be == 'job' }
+        it { expect(resource.singular_name).to be == 'manufacturer' }
       end
 
       context 'when the singular name is a capitalized string' do

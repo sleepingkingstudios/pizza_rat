@@ -8,15 +8,19 @@ RSpec.describe Responders::Html do
   subject(:responder) { described_class.new(controller, resource: resource) }
 
   let(:controller) { instance_double(ApplicationController) }
-  let(:resource)   { Resource.new(Job) }
+  let(:resource)   { Resource.new(Spec::Manufacturer) }
 
   describe '#call' do
     shared_examples 'should handle a FailedValidation error' do
       describe 'with a failing result with error: FailedValidation' do
-        let(:job)   { FactoryBot.build(:job) }
-        let(:error) { Errors::FailedValidation.new(record: job) }
+        let(:manufacturer) { FactoryBot.build(:manufacturer) }
+        let(:error) do
+          Errors::FailedValidation.new(record: manufacturer)
+        end
         let(:result) do
-          Cuprum::Result.new(value: { 'job' => job }, error: error)
+          Cuprum::Result.new(
+            value: { 'manufacturer' => manufacturer }, error: error
+          )
         end
         let(:locals) { { data: result.value, error: error } }
 
@@ -73,9 +77,12 @@ RSpec.describe Responders::Html do
     shared_examples 'should handle a NotFound error' do
       describe 'with a failing result with error: NotFound' do
         let(:error) do
-          Errors::NotFound.new(attributes: { 'id' => 0 }, record_class: Job)
+          Errors::NotFound.new(
+            attributes:   { 'id' => 0 },
+            record_class: Spec::Manufacturer
+          )
         end
-        let(:result)     { Cuprum::Result.new(error: error) }
+        let(:result) { Cuprum::Result.new(error: error) }
 
         include_examples 'should redirect to the index resources path'
       end
@@ -119,7 +126,7 @@ RSpec.describe Responders::Html do
     end
 
     shared_examples 'should redirect to the index resources path' do
-      let(:index_path) { '/jobs' }
+      let(:index_path) { '/manufacturers' }
 
       it 'should redirect to the index resources path' do
         responder.call(result, action: action, **options)
@@ -186,26 +193,30 @@ RSpec.describe Responders::Html do
       end
 
       describe 'with a passing result with a non-matching singular resource' do
-        let(:job)    { FactoryBot.create(:job) }
-        let(:result) { Cuprum::Result.new(value: { 'current_job' => job }) }
+        let(:manufacturer) { FactoryBot.create(:manufacturer) }
+        let(:result) do
+          Cuprum::Result.new(value: { 'current_manufacturer' => manufacturer })
+        end
 
         include_examples 'should dispatch a failure response'
       end
 
       describe 'with a passing result with a matching singular resource' do
-        let(:job)    { FactoryBot.create(:job) }
-        let(:result) { Cuprum::Result.new(value: { 'job' => job }) }
+        let(:manufacturer) { FactoryBot.create(:manufacturer) }
+        let(:result) do
+          Cuprum::Result.new(value: { 'manufacturer' => manufacturer })
+        end
         let(:locals) { { data: result.value, error: nil } }
 
         include_examples 'should dispatch a success response'
       end
 
       describe 'with a passing result with multiple resources' do
-        let(:job)       { FactoryBot.create(:job) }
+        let(:manufacturer)       { FactoryBot.create(:manufacturer) }
         let(:employees) { Array.new(3) { {} } }
         let(:result) do
           Cuprum::Result.new(
-            value: { 'job' => job, 'employees' => employees }
+            value: { 'manufacturer' => manufacturer, 'employees' => employees }
           )
         end
 
@@ -231,27 +242,37 @@ RSpec.describe Responders::Html do
 
         describe 'with a passing result with a non-matching singular resource' \
         do
-          let(:job)    { FactoryBot.create(:job) }
-          let(:result) { Cuprum::Result.new(value: { 'current_job' => job }) }
+          let(:manufacturer) { FactoryBot.create(:manufacturer) }
+          let(:result) do
+            Cuprum::Result.new(
+              value: { 'current_manufacturer' => manufacturer }
+            )
+          end
 
           include_examples 'should dispatch a success response'
         end
       end
 
       describe 'with resource_key: value' do
-        let(:options) { super().merge(resource_key: 'current_job') }
+        let(:options) { super().merge(resource_key: 'current_manufacturer') }
 
         describe 'with a passing result with a non-matching singular resource' \
         do
-          let(:job)    { FactoryBot.create(:job) }
-          let(:result) { Cuprum::Result.new(value: { 'job' => job }) }
+          let(:manufacturer) { FactoryBot.create(:manufacturer) }
+          let(:result) do
+            Cuprum::Result.new(value: { 'manufacturer' => manufacturer })
+          end
 
           include_examples 'should dispatch a failure response'
         end
 
         describe 'with a passing result with a matching singular resource' do
-          let(:job)    { FactoryBot.create(:job) }
-          let(:result) { Cuprum::Result.new(value: { 'current_job' => job }) }
+          let(:manufacturer) { FactoryBot.create(:manufacturer) }
+          let(:result) do
+            Cuprum::Result.new(
+              value: { 'current_manufacturer' => manufacturer }
+            )
+          end
           let(:locals) { { data: result.value, error: nil } }
 
           include_examples 'should dispatch a success response'
@@ -292,26 +313,30 @@ RSpec.describe Responders::Html do
       end
 
       describe 'with a passing result with a non-matching singular resource' do
-        let(:job)    { FactoryBot.create(:job) }
-        let(:result) { Cuprum::Result.new(value: { 'current_job' => job }) }
+        let(:manufacturer) { FactoryBot.create(:manufacturer) }
+        let(:result) do
+          Cuprum::Result.new(value: { 'current_manufacturer' => manufacturer })
+        end
 
         include_examples 'should dispatch a success response'
       end
 
       describe 'with a passing result with a matching singular resource' do
-        let(:job)    { FactoryBot.create(:job) }
-        let(:result) { Cuprum::Result.new(value: { 'job' => job }) }
+        let(:manufacturer) { FactoryBot.create(:manufacturer) }
+        let(:result) do
+          Cuprum::Result.new(value: { 'manufacturer' => manufacturer })
+        end
         let(:locals) { { data: result.value, error: nil } }
 
         include_examples 'should dispatch a success response'
       end
 
       describe 'with a passing result with multiple resources' do
-        let(:job)       { FactoryBot.create(:job) }
+        let(:manufacturer)       { FactoryBot.create(:manufacturer) }
         let(:employees) { Array.new(3) { {} } }
         let(:result) do
           Cuprum::Result.new(
-            value: { 'job' => job, 'employees' => employees }
+            value: { 'manufacturer' => manufacturer, 'employees' => employees }
           )
         end
 
@@ -337,15 +362,21 @@ RSpec.describe Responders::Html do
 
         describe 'with a passing result with a non-matching singular resource' \
         do
-          let(:job)    { FactoryBot.create(:job) }
-          let(:result) { Cuprum::Result.new(value: { 'current_job' => job }) }
+          let(:manufacturer) { FactoryBot.create(:manufacturer) }
+          let(:result) do
+            Cuprum::Result.new(
+              value: { 'current_manufacturer' => manufacturer }
+            )
+          end
 
           include_examples 'should dispatch a failure response'
         end
 
         describe 'with a passing result with a matching singular resource' do
-          let(:job)    { FactoryBot.create(:job) }
-          let(:result) { Cuprum::Result.new(value: { 'job' => job }) }
+          let(:manufacturer) { FactoryBot.create(:manufacturer) }
+          let(:result) do
+            Cuprum::Result.new(value: { 'manufacturer' => manufacturer })
+          end
           let(:locals) { { data: result.value, error: nil } }
 
           include_examples 'should dispatch a success response'
@@ -356,21 +387,27 @@ RSpec.describe Responders::Html do
         let(:options) do
           super().merge(
             require_resource: true,
-            resource_key:     'current_job'
+            resource_key:     'current_manufacturer'
           )
         end
 
         describe 'with a passing result with a non-matching singular resource' \
         do
-          let(:job)    { FactoryBot.create(:job) }
-          let(:result) { Cuprum::Result.new(value: { 'job' => job }) }
+          let(:manufacturer) { FactoryBot.create(:manufacturer) }
+          let(:result) do
+            Cuprum::Result.new(value: { 'manufacturer' => manufacturer })
+          end
 
           include_examples 'should dispatch a failure response'
         end
 
         describe 'with a passing result with a matching singular resource' do
-          let(:job)    { FactoryBot.create(:job) }
-          let(:result) { Cuprum::Result.new(value: { 'current_job' => job }) }
+          let(:manufacturer) { FactoryBot.create(:manufacturer) }
+          let(:result) do
+            Cuprum::Result.new(
+              value: { 'current_manufacturer' => manufacturer }
+            )
+          end
           let(:locals) { { data: result.value, error: nil } }
 
           include_examples 'should dispatch a success response'
@@ -433,11 +470,13 @@ RSpec.describe Responders::Html do
 
       include_examples 'should require a valid resource',
         handle_success: lambda {
-          let(:index_path) { '/jobs' }
-          let(:show_path)  { "/jobs/#{job.id}" }
+          let(:index_path) { '/manufacturers' }
+          let(:show_path)  { "/manufacturers/#{manufacturer.id}" }
           let(:expected_path) do
             resource =
-              result.value&.fetch(options.fetch(:resource_key, 'job'), nil)
+              result
+              .value
+              &.fetch(options.fetch(:resource_key, 'manufacturer'), nil)
 
             resource ? show_path : index_path
           end
@@ -491,11 +530,13 @@ RSpec.describe Responders::Html do
 
       include_examples 'should require a valid resource',
         handle_success: lambda {
-          let(:index_path) { '/jobs' }
-          let(:show_path)  { "/jobs/#{job.id}" }
+          let(:index_path) { '/manufacturers' }
+          let(:show_path)  { "/manufacturers/#{manufacturer.id}" }
           let(:expected_path) do
             resource =
-              result.value&.fetch(options.fetch(:resource_key, 'job'), nil)
+              result
+              .value
+              &.fetch(options.fetch(:resource_key, 'manufacturer'), nil)
 
             resource ? show_path : index_path
           end
