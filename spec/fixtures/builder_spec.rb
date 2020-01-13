@@ -18,61 +18,19 @@ RSpec.describe Fixtures::Builder do
     let(:data) do
       [
         {
-          'id'                 => 0,
-          'action_required'    => false,
-          'application_active' => true,
-          'application_status' => Job::ApplicationStatuses::INTERVIEWING,
-          'company_name'       => 'Umbrella Corp',
-          'data'               => {
-            'events' => [
-              { 'type' => 'viewed_listing' },
-              { 'type' => 'application_sent' },
-              { 'type' => 'interview_scheduled' }
-            ]
-          },
-          'notes'              => 'BYO-Biohazard Suit',
-          'source'             => 'PlayStation',
-          'source_data'        => { 'publisher' => 'Capcom' },
-          'time_period'        => '2020-01',
-          'title'              => 'Test Subject'
+          'id'         => '0',
+          'name'       => 'Umbrella Corp',
+          'founded_at' => '1996-03-02'
         },
         {
-          'id'                 => 1,
-          'action_required'    => false,
-          'application_active' => true,
-          'application_status' => Job::ApplicationStatuses::APPLIED,
-          'company_name'       => 'Weyland-Yutani',
-          'data'               => {
-            'events' => [
-              { 'type' => 'pitched_by_recruiter' }
-            ]
-          },
-          'notes'              => 'A job with heart',
-          'source'             => 'IMDB',
-          'source_data'        => { 'producer' => 'Ridley Scott' },
-          'time_period'        => '2020-01',
-          'title'              => 'Crew'
+          'id'         => '1',
+          'name'       => 'Weyland-Yutani',
+          'founded_at' => '1979-06-22'
         },
         {
-          'id'                 => 2,
-          'action_required'    => false,
-          'application_active' => false,
-          'application_status' => Job::ApplicationStatuses::CLOSED,
-          'company_name'       => 'Raccoon City PD',
-          'data'               => {
-            'events' => [
-              { 'type' => 'viewed_listing' },
-              { 'type' => 'application_sent' },
-              { 'type' => 'interview_scheduled' },
-              { 'type' => 'interview_completed' },
-              { 'type' => 'did_not_continue' }
-            ]
-          },
-          'notes'              => 'Need warm bodies for some reason',
-          'source'             => 'PlayStation',
-          'source_data'        => { 'publisher' => 'Capcom' },
-          'time_period'        => '2020-01',
-          'title'              => 'Officer'
+          'id'         => '2',
+          'name'       => 'Raccoon City PD',
+          'founded_at' => '1988-1-21'
         }
       ]
     end
@@ -83,7 +41,7 @@ RSpec.describe Fixtures::Builder do
       {
         'mappings' => [
           {
-            'options' => { 'property' => 'company_name' },
+            'options' => { 'property' => 'name' },
             'type'    => 'upcase'
           }
         ]
@@ -101,7 +59,7 @@ RSpec.describe Fixtures::Builder do
 
   subject(:builder) { described_class.new(record_class) }
 
-  let(:record_class) { Job }
+  let(:record_class) { Spec::Manufacturer }
   let(:environment)  { 'fixtures' }
 
   describe '::new' do
@@ -204,7 +162,11 @@ RSpec.describe Fixtures::Builder do
     end
 
     def matches_attribute?(key, expected, actual)
-      expected = Date.parse(expected) if key.end_with?('_date')
+      if key == 'id' || key.end_with?('_id')
+        expected = expected.to_i
+      elsif key.end_with?('_at') || key.end_with?('_date')
+        expected = Date.parse(expected)
+      end
 
       expected == actual
     end
@@ -263,7 +225,9 @@ RSpec.describe Fixtures::Builder do
       it { expect { builder.create }.to change(record_class, :count).by(1) }
 
       context 'when the record already exists' do
-        let(:factory_name) { record_class.name.underscore.singularize.intern }
+        let(:factory_name) do
+          record_class.name.split('::').last.underscore.singularize.intern
+        end
         let(:existing_record) do
           FactoryBot.build(factory_name, id: read_data.dig(0, 'id'))
         end
@@ -301,7 +265,9 @@ RSpec.describe Fixtures::Builder do
       it { expect { builder.create }.to change(record_class, :count).by(3) }
 
       context 'when one of the records already exists' do
-        let(:factory_name) { record_class.name.underscore.singularize.intern }
+        let(:factory_name) do
+          record_class.name.split('::').last.underscore.singularize.intern
+        end
         let(:existing_record) do
           FactoryBot.build(factory_name, id: read_data.dig(1, 'id'))
         end
@@ -324,7 +290,9 @@ RSpec.describe Fixtures::Builder do
       end
 
       context 'when each of the records already exist' do
-        let(:factory_name) { record_class.name.underscore.singularize.intern }
+        let(:factory_name) do
+          record_class.name.split('::').last.underscore.singularize.intern
+        end
         let(:existing_records) do
           read_data.map do |attributes|
             FactoryBot.build(factory_name, id: attributes.dig('id'))
@@ -413,7 +381,7 @@ RSpec.describe Fixtures::Builder do
 
     describe 'with count: 1' do
       let(:error_message) do
-        'Requested 1 job, but the data is empty'
+        'Requested 1 manufacturer, but the data is empty'
       end
 
       it 'should raise an error' do
@@ -424,7 +392,7 @@ RSpec.describe Fixtures::Builder do
 
     describe 'with count: 3' do
       let(:error_message) do
-        'Requested 3 jobs, but the data is empty'
+        'Requested 3 manufacturers, but the data is empty'
       end
 
       it 'should raise an error' do
@@ -470,7 +438,7 @@ RSpec.describe Fixtures::Builder do
 
       describe 'with count: 6' do
         let(:error_message) do
-          'Requested 6 jobs, but there are only 3 jobs'
+          'Requested 6 manufacturers, but there are only 3 manufacturers'
         end
 
         it 'should raise an error' do
@@ -502,7 +470,7 @@ RSpec.describe Fixtures::Builder do
       wrap_context 'when options are defined for the resource' do
         let(:expected) do
           data.map do |item|
-            item.merge('company_name' => item['company_name'].upcase)
+            item.merge('name' => item['name'].upcase)
           end
         end
 

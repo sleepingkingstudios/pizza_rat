@@ -32,7 +32,7 @@ module Fixtures
     def read(count: nil, except: nil)
       loader = Fixtures::Loader.new(
         environment:   environment,
-        resource_name: resource_name
+        resource_name: qualified_resource_name
       ).call
 
       data     = loader.data
@@ -122,8 +122,13 @@ module Fixtures
       data
     end
 
+    def qualified_resource_name
+      @qualified_resource_name ||=
+        record_class.name.underscore.pluralize
+    end
+
     def resource_name
-      @resource_name ||= record_class.name.underscore.pluralize
+      @resource_name ||= qualified_resource_name.split('/').last
     end
 
     def update_record(record, attributes)

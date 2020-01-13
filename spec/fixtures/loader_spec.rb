@@ -9,22 +9,19 @@ RSpec.describe Fixtures::Loader do
     let(:data) do
       [
         {
-          'id'               => '00000000-0000-0000-0000-000000000000',
-          'name'             => 'Star Wars',
-          'publication_date' => '1977-05-25',
-          'publisher_name'   => 'Lucasfilm'
+          'id'         => '0',
+          'name'       => 'Umbrella Corp',
+          'founded_at' => '1996-03-02'
         },
         {
-          'id'               => '00000000-0000-0000-0000-000000000001',
-          'name'             => 'The Empire Strikes Back',
-          'publication_date' => '1980-06-20',
-          'publisher_name'   => 'Lucasfilm'
+          'id'         => '1',
+          'name'       => 'Weyland-Yutani',
+          'founded_at' => '1979-06-22'
         },
         {
-          'id'               => '00000000-0000-0000-0000-000000000002',
-          'name'             => 'Return of the Jedi',
-          'publication_date' => '1983-05-25',
-          'publisher_name'   => 'Lucasfilm'
+          'id'         => '2',
+          'name'       => 'Raccoon City PD',
+          'founded_at' => '1988-1-21'
         }
       ]
     end
