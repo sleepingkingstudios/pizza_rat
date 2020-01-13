@@ -11,7 +11,7 @@ RSpec.describe Operations::Records::Destroy do
 
   subject(:operation) { described_class.new(record_class) }
 
-  let(:record_class) { Job }
+  let(:record_class) { Spec::Manufacturer }
 
   describe '::new' do
     it { expect(described_class).to be_constructible.with(1).argument }
@@ -29,11 +29,13 @@ RSpec.describe Operations::Records::Destroy do
     include_examples 'should validate the record'
 
     describe 'with a record' do
-      let!(:record) { FactoryBot.create(:job) }
+      let!(:record) { FactoryBot.create(:manufacturer) }
 
       it { expect(call_operation).to have_passing_result.with_value(record) }
 
-      it { expect { call_operation }.to change(Job, :count).by(-1) }
+      it 'should reduce the record count' do
+        expect { call_operation }.to change(Spec::Manufacturer, :count).by(-1)
+      end
 
       it 'should destroy the record' do
         expect { call_operation }.to change(record, :persisted?).to be false

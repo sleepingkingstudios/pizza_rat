@@ -7,7 +7,7 @@ require 'operations/records/find_matching'
 RSpec.describe Operations::Records::FindMatching do
   subject(:operation) { described_class.new(record_class) }
 
-  let(:record_class) { Job }
+  let(:record_class) { Spec::Manufacturer }
 
   describe '::new' do
     it { expect(described_class).to be_constructible.with(1).argument }
@@ -25,13 +25,13 @@ RSpec.describe Operations::Records::FindMatching do
     context 'when there are many records' do
       let(:record_attributes) do
         [
-          { company_name: 'Weyland-Yutani',  created_at: 1.day.ago },
-          { company_name: 'Umbrella Corp',   created_at: 3.days.ago },
-          { company_name: 'Raccoon City PD', created_at: 2.days.ago }
+          { name: 'Weyland-Yutani',  created_at: 1.day.ago },
+          { name: 'Umbrella Corp',   created_at: 3.days.ago },
+          { name: 'Raccoon City PD', created_at: 2.days.ago }
         ]
       end
       let!(:records) do
-        record_attributes.map { |hsh| FactoryBot.create(:job, hsh) }
+        record_attributes.map { |hsh| FactoryBot.create(:manufacturer, hsh) }
       end
       let(:expected) do
         records.sort_by(&:created_at).reverse
@@ -54,10 +54,10 @@ RSpec.describe Operations::Records::FindMatching do
       end
 
       describe 'with order: Hash' do
-        let(:order)   { { company_name: :asc } }
+        let(:order)   { { name: :asc } }
         let(:options) { { order: order } }
         let(:expected) do
-          records.sort_by(&:company_name)
+          records.sort_by(&:name)
         end
 
         it 'should find the matching records and apply the ordering' do

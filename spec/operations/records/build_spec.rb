@@ -11,7 +11,7 @@ RSpec.describe Operations::Records::Build do
 
   subject(:operation) { described_class.new(record_class) }
 
-  let(:record_class) { Job }
+  let(:record_class) { Spec::Manufacturer }
 
   describe '::new' do
     it { expect(described_class).to be_constructible.with(1).argument }
@@ -57,9 +57,8 @@ RSpec.describe Operations::Records::Build do
     describe 'with a hash with valid attributes' do
       let(:attributes) do
         {
-          'company_name' => 'Umbrella Corp',
-          'source'       => 'PlayStation',
-          'time_period'  => '2020-01'
+          'name'       => 'Umbrella Corp',
+          'founded_at' => '1996-03-02'
         }
       end
       let(:expected) { super().merge(attributes) }

@@ -11,7 +11,7 @@ RSpec.describe Operations::Records::Assign do
 
   subject(:operation) { described_class.new(record_class) }
 
-  let(:record_class) { Job }
+  let(:record_class) { Spec::Manufacturer }
 
   describe '::new' do
     it { expect(described_class).to be_constructible.with(1).argument }
@@ -40,19 +40,20 @@ RSpec.describe Operations::Records::Assign do
     describe 'with a hash with valid attributes' do
       let(:attributes) do
         {
-          'company_name' => 'Umbrella Corp',
-          'source'       => 'PlayStation',
-          'time_period'  => '2020-01'
+          'name'       => 'Umbrella Corp',
+          'founded_at' => '1996-03-02'
         }
       end
-      let(:expected) { super().merge(attributes) }
+      let(:expected) do
+        attributes.merge('founded_at' => Date.parse(attributes['founded_at']))
+      end
 
       it { expect(call_operation).to have_passing_result.with_value(record) }
 
       it 'should update the attributes' do
         expect { call_operation }
           .to change(record, :attributes)
-          .to be >= attributes
+          .to be >= expected
       end
     end
   end

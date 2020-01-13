@@ -15,10 +15,9 @@ module Spec::Support::Examples
       describe 'when the attributes fail validation' do
         let(:attributes) do
           FactoryBot.attributes_for(
-            :job,
-            company_name: nil,
-            source:       '',
-            time_period:  'the distant future'
+            :manufacturer,
+            founded_at: nil,
+            name:       nil
           )
         end
         let(:expected_error) do
