@@ -71,6 +71,24 @@ RSpec.describe TimePeriod, type: :model do
     end
   end
 
+  describe '#jobs' do
+    include_examples 'should have property', :jobs, []
+
+    context 'when there are many jobs' do
+      let(:jobs) do
+        Array.new(3) { FactoryBot.build(:job, time_period: time_period) }
+      end
+
+      before(:example) do
+        jobs.each(&:save!)
+
+        3.times { FactoryBot.create(:job, :with_time_period) }
+      end
+
+      it { expect(time_period.jobs).to contain_exactly(*jobs) }
+    end
+  end
+
   describe '#month' do
     include_examples 'should have attribute', :month
   end

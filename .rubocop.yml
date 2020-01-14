@@ -10,6 +10,9 @@ AllCops:
     - 'lib/tasks/auto_annotate_models.rake'
     - 'node_modules/**/*'
 
+FactoryBot/CreateList:
+  EnforcedStyle: n_times
+
 Layout/AlignArguments:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: ~

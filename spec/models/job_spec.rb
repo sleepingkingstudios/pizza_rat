@@ -7,6 +7,16 @@ require 'support/examples/model_examples'
 RSpec.describe Job, type: :model do
   include Spec::Support::Examples::ModelExamples
 
+  shared_context 'when the job has a time period' do
+    let(:time_period) { FactoryBot.build(:time_period) }
+
+    before(:example) do
+      time_period.save!
+
+      job.time_period = time_period
+    end
+  end
+
   subject(:job) { described_class.new(attributes) }
 
   let(:attributes) do
@@ -25,7 +35,6 @@ RSpec.describe Job, type: :model do
       notes:              'BYO-Biohazard Suit',
       source:             'PlayStation',
       source_data:        { 'publisher' => 'Capcom' },
-      time_period:        '2020-01',
       title:              'Test Subject'
     }
   end
@@ -91,15 +100,15 @@ RSpec.describe Job, type: :model do
 
     context 'when there are many jobs' do
       let(:expected) do
-        Array.new(3) { FactoryBot.build(:job, :applied) }
+        Array.new(3) { FactoryBot.build(:job, :applied, :with_time_period) }
       end
 
       before(:example) do
         expected.each(&:save!)
 
-        FactoryBot.create(:job, :closed)
-        FactoryBot.create(:job, :interviewing)
-        FactoryBot.create(:job, :prospect)
+        FactoryBot.create(:job, :closed,       :with_time_period)
+        FactoryBot.create(:job, :interviewing, :with_time_period)
+        FactoryBot.create(:job, :prospect,     :with_time_period)
       end
 
       it { expect(described_class.applied).to contain_exactly(*expected) }
@@ -115,15 +124,15 @@ RSpec.describe Job, type: :model do
 
     context 'when there are many jobs' do
       let(:expected) do
-        Array.new(3) { FactoryBot.build(:job, :closed) }
+        Array.new(3) { FactoryBot.build(:job, :closed, :with_time_period) }
       end
 
       before(:example) do
         expected.each(&:save!)
 
-        FactoryBot.create(:job, :applied)
-        FactoryBot.create(:job, :interviewing)
-        FactoryBot.create(:job, :prospect)
+        FactoryBot.create(:job, :applied,      :with_time_period)
+        FactoryBot.create(:job, :interviewing, :with_time_period)
+        FactoryBot.create(:job, :prospect,     :with_time_period)
       end
 
       it { expect(described_class.closed).to contain_exactly(*expected) }
@@ -141,15 +150,17 @@ RSpec.describe Job, type: :model do
 
     context 'when there are many jobs' do
       let(:expected) do
-        Array.new(3) { FactoryBot.build(:job, :interviewing) }
+        Array.new(3) do
+          FactoryBot.build(:job, :interviewing, :with_time_period)
+        end
       end
 
       before(:example) do
         expected.each(&:save!)
 
-        FactoryBot.create(:job, :applied)
-        FactoryBot.create(:job, :closed)
-        FactoryBot.create(:job, :prospect)
+        FactoryBot.create(:job, :applied,  :with_time_period)
+        FactoryBot.create(:job, :closed,   :with_time_period)
+        FactoryBot.create(:job, :prospect, :with_time_period)
       end
 
       it { expect(described_class.interviewing).to contain_exactly(*expected) }
@@ -165,15 +176,15 @@ RSpec.describe Job, type: :model do
 
     context 'when there are many jobs' do
       let(:expected) do
-        Array.new(3) { FactoryBot.build(:job, :prospect) }
+        Array.new(3) { FactoryBot.build(:job, :prospect, :with_time_period) }
       end
 
       before(:example) do
         expected.each(&:save!)
 
-        FactoryBot.create(:job, :applied)
-        FactoryBot.create(:job, :closed)
-        FactoryBot.create(:job, :interviewing)
+        FactoryBot.create(:job, :applied,      :with_time_period)
+        FactoryBot.create(:job, :closed,       :with_time_period)
+        FactoryBot.create(:job, :interviewing, :with_time_period)
       end
 
       it { expect(described_class.prospects).to contain_exactly(*expected) }
@@ -239,6 +250,8 @@ RSpec.describe Job, type: :model do
   end
 
   describe '#id' do
+    include_context 'when the job has a time period'
+
     include_examples 'should have attribute',
       :id,
       value: 0
@@ -263,7 +276,21 @@ RSpec.describe Job, type: :model do
   end
 
   describe '#time_period' do
-    include_examples 'should have attribute', :time_period
+    include_examples 'should have property', :time_period
+
+    wrap_context 'when the job has a time period' do
+      it { expect(job.time_period).to be == time_period }
+    end
+  end
+
+  describe '#time_period_id' do
+    include_examples 'should have attribute',
+      :time_period_id,
+      value: nil
+
+    wrap_context 'when the job has a time period' do
+      it { expect(job.time_period_id).to be == time_period.id }
+    end
   end
 
   describe '#title' do
@@ -275,7 +302,9 @@ RSpec.describe Job, type: :model do
   end
 
   describe '#valid?' do
-    it { expect(job).not_to have_errors }
+    wrap_context 'when the job has a time period' do
+      it { expect(job).not_to have_errors }
+    end
 
     include_examples 'should validate the presence of',
       :application_status,
@@ -295,61 +324,6 @@ RSpec.describe Job, type: :model do
 
     include_examples 'should validate the presence of',
       :time_period,
-      type: String
-
-    describe 'when the time period format is invalid' do
-      let(:attributes) { super().merge time_period: 'A Long Time Ago' }
-
-      it 'should have validation errors' do
-        expect(job)
-          .to have_errors
-          .on(:time_period)
-          .with_message('must be in YYYY-MM format')
-      end
-    end
-
-    describe 'when the time period month is before the permitted range' do
-      let(:attributes) { super().merge time_period: '2020-00' }
-
-      it 'should have validation errors' do
-        expect(job)
-          .to have_errors
-          .on(:time_period_month)
-          .with_message('must be greater than or equal to 1')
-      end
-    end
-
-    describe 'when the time period month is after the permitted range' do
-      let(:attributes) { super().merge time_period: '2020-13' }
-
-      it 'should have validation errors' do
-        expect(job)
-          .to have_errors
-          .on(:time_period_month)
-          .with_message('must be less than or equal to 12')
-      end
-    end
-
-    describe 'when the time period year is before the permitted range' do
-      let(:attributes) { super().merge time_period: '2009-11' }
-
-      it 'should have validation errors' do
-        expect(job)
-          .to have_errors
-          .on(:time_period_year)
-          .with_message('must be greater than 2009')
-      end
-    end
-
-    describe 'when the time period year is after the permitted range' do
-      let(:attributes) { super().merge time_period: '2030-01' }
-
-      it 'should have validation errors' do
-        expect(job)
-          .to have_errors
-          .on(:time_period_year)
-          .with_message('must be less than 2030')
-      end
-    end
+      message: 'must exist'
   end
 end

@@ -1,5 +1,6 @@
 ---
 - id:                 0
+  time_period_id:     1
   action_required:    false
   application_active: true
   application_status: interviewing
@@ -7,7 +8,6 @@
   notes:              BYO-Biohazard Suit
   source:             PlayStation
   source_data:        { publisher: Capcom }
-  time_period:        2020-01
   title:              Test Subject
   data:
     events:
@@ -15,6 +15,7 @@
       - type: application_sent
       - type: interview_scheduled
 - id:                 1
+  time_period_id:     1
   action_required:    true
   application_active: true
   application_status: applied
@@ -22,12 +23,12 @@
   notes:              A job with heart
   source:             IMDB
   source_data:        { producer: 'Ridley Scott' }
-  time_period:        2020-01
   title:              Crew
   data:
     events:
       - type: pitched_by_recruiter
 - id:                 2
+  time_period_id:     2
   action_required:    false
   application_active: false
   application_status: closed
@@ -35,7 +36,6 @@
   notes:              Need warm bodies for some reason
   source:             PlayStation
   source_data:        { publisher: 'Capcom' }
-  time_period:        2020-01
   title:              Officer
   data:
     events:

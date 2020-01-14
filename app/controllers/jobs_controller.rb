@@ -11,7 +11,7 @@ class JobsController < ResourcesController
     notes
     source
     source_data
-    time_period
+    time_period_id
     title
   ].freeze
   private_constant :PERMITTED_ATTRIBUTES

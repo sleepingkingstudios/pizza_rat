@@ -9,7 +9,15 @@ require 'support/examples/controller_examples'
 RSpec.describe JobsController, type: :request do
   include Spec::Support::Examples::ControllerExamples
 
+  shared_context 'when there are many time periods' do
+    let(:time_periods) { Fixtures.build(TimePeriod) }
+
+    before(:each) { time_periods.each(&:save!) }
+  end
+
   shared_context 'when there are many jobs' do
+    include_context 'when there are many time periods'
+
     let(:jobs) { Fixtures.build(Job, count: 3) }
 
     before(:each) { jobs.each(&:save!) }
@@ -103,6 +111,8 @@ RSpec.describe JobsController, type: :request do
   end
 
   describe 'POST /jobs' do
+    include_context 'when there are many time periods'
+
     def call_action
       post '/jobs', headers: headers, params: params
     end
@@ -112,10 +122,10 @@ RSpec.describe JobsController, type: :request do
     describe 'with invalid attributes' do
       let(:job_attributes) do
         {
-          'company_name' => nil,
-          'source'       => '20th Century Fox',
-          'time_period'  => '2020-01',
-          'title'        => 'Freighter Crew'
+          'company_name'   => nil,
+          'source'         => '20th Century Fox',
+          'time_period_id' => time_periods.first.id,
+          'title'          => 'Freighter Crew'
         }
       end
       let(:params) { { 'job' => job_attributes } }
@@ -149,10 +159,10 @@ RSpec.describe JobsController, type: :request do
     describe 'with valid attributes' do
       let(:job_attributes) do
         {
-          'company_name' => 'Weyland-Yutani',
-          'source'       => '20th Century Fox',
-          'time_period'  => '2020-01',
-          'title'        => 'Freighter Crew'
+          'company_name'   => 'Weyland-Yutani',
+          'source'         => '20th Century Fox',
+          'time_period_id' => time_periods.first.id,
+          'title'          => 'Freighter Crew'
         }
       end
       let(:job)    { Job.where(job_attributes).last }
@@ -191,7 +201,7 @@ RSpec.describe JobsController, type: :request do
     include_examples 'should require a valid job id'
 
     describe 'with a valid job id' do
-      let(:job)    { FactoryBot.build(:job) }
+      let(:job)    { FactoryBot.build(:job, :with_time_period) }
       let(:job_id) { job.id }
 
       before(:example) { job.save! }
@@ -225,7 +235,7 @@ RSpec.describe JobsController, type: :request do
     include_examples 'should require a valid job id'
 
     describe 'with a valid job id' do
-      let(:job)    { FactoryBot.build(:job) }
+      let(:job)    { FactoryBot.build(:job, :with_time_period) }
       let(:job_id) { job.id }
 
       before(:example) { job.save! }
@@ -266,7 +276,7 @@ RSpec.describe JobsController, type: :request do
       let(:job_attributes) do
         { 'company_name' => nil }
       end
-      let(:job)    { FactoryBot.build(:job) }
+      let(:job)    { FactoryBot.build(:job, :with_time_period) }
       let(:job_id) { job.id }
       let(:params) { { 'job' => job_attributes } }
 
@@ -300,7 +310,7 @@ RSpec.describe JobsController, type: :request do
       let(:job_attributes) do
         { 'company_name' => 'Weyland-Yutani' }
       end
-      let(:job)    { FactoryBot.build(:job) }
+      let(:job)    { FactoryBot.build(:job, :with_time_period) }
       let(:job_id) { job.id }
       let(:params) { { 'job' => job_attributes } }
 
@@ -339,7 +349,7 @@ RSpec.describe JobsController, type: :request do
     include_examples 'should require a valid job id'
 
     describe 'with a valid job id' do
-      let(:job)    { FactoryBot.build(:job) }
+      let(:job)    { FactoryBot.build(:job, :with_time_period) }
       let(:job_id) { job.id }
 
       before(:example) { job.save! }

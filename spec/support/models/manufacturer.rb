@@ -2,6 +2,8 @@
 
 module Spec
   class Manufacturer < ActiveRecord::Base
+    self.table_name = 'manufacturers'
+
     def self.migrate! # rubocop:disable Metrics/MethodLength
       connection.execute(
         <<~SQL

@@ -7,7 +7,7 @@ FactoryBot.define do
 
     source      { 'Internet' }
     source_data { { 'url' => 'https://www.example.com' } }
-    time_period { '2020-01' }
+    time_period { nil }
 
     trait :accepted do
       application_status { Job::ApplicationStatuses::CLOSED }
@@ -91,6 +91,10 @@ FactoryBot.define do
           ]
         }
       end
+    end
+
+    trait :with_time_period do
+      time_period { create(:time_period) }
     end
   end
   # :nocov:

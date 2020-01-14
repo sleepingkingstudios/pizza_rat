@@ -11,6 +11,9 @@ class TimePeriod < ApplicationRecord
     order(year: :desc, month: :desc).limit(1).first
   end
 
+  ### Associations
+  has_many :jobs
+
   ### Validations
   validates :month,
     numericality: {

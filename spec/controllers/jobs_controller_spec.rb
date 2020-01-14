@@ -12,12 +12,13 @@ RSpec.describe JobsController, type: :controller do
   let(:resource) { controller.send :resource }
   let(:resource_params) do
     {
-      'company_name' => 'Weyland-Yutani',
-      'source'       => '20th Century Fox',
-      'time_period'  => '2020-01',
-      'title'        => 'Freighter Crew'
+      'company_name'   => 'Weyland-Yutani',
+      'source'         => '20th Century Fox',
+      'time_period_id' => time_period.id,
+      'title'          => 'Freighter Crew'
     }
   end
+  let(:time_period) { FactoryBot.create(:time_period) }
 
   include_examples 'should define action', :create, status: :created
 
@@ -83,7 +84,7 @@ RSpec.describe JobsController, type: :controller do
   describe '#destroy_resource' do
     include_context 'with a params hash'
 
-    let(:job)    { FactoryBot.create(:job) }
+    let(:job)    { FactoryBot.create(:job, :with_time_period) }
     let(:params) { { 'id' => job.id } }
 
     it 'should define the private method' do
@@ -114,7 +115,7 @@ RSpec.describe JobsController, type: :controller do
   describe '#edit_resource' do
     include_context 'with a params hash'
 
-    let(:job)    { FactoryBot.create(:job) }
+    let(:job)    { FactoryBot.create(:job, :with_time_period) }
     let(:params) { { 'id' => job.id } }
 
     it 'should define the private method' do
@@ -183,7 +184,9 @@ RSpec.describe JobsController, type: :controller do
     end
 
     context 'when there are many jobs' do
-      let!(:jobs) { Array.new(3) { FactoryBot.create(:job) } }
+      let!(:jobs) do
+        Array.new(3) { FactoryBot.create(:job, :with_time_period) }
+      end
 
       it 'should return the matching resource instances' do
         expect(controller.send(:index_resources))
@@ -247,7 +250,7 @@ RSpec.describe JobsController, type: :controller do
         notes
         source
         source_data
-        time_period
+        time_period_id
         title
       ]
     end
@@ -276,7 +279,7 @@ RSpec.describe JobsController, type: :controller do
   describe '#show_resource' do
     include_context 'with a params hash'
 
-    let(:job)    { FactoryBot.create(:job) }
+    let(:job)    { FactoryBot.create(:job, :with_time_period) }
     let(:params) { { 'id' => job.id } }
 
     it 'should define the private method' do
@@ -301,7 +304,7 @@ RSpec.describe JobsController, type: :controller do
   describe '#update_resource' do
     include_context 'with a params hash'
 
-    let(:job) { FactoryBot.create(:job) }
+    let(:job) { FactoryBot.create(:job, :with_time_period) }
     let(:params) do
       { 'id' => job.id, resource.singular_name => resource_params }
     end
