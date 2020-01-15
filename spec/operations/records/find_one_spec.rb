@@ -11,8 +11,8 @@ RSpec.describe Operations::Records::FindOne do
 
   subject(:operation) { described_class.new(record_class) }
 
-  let(:record_class)   { Job }
-  let(:invalid_job_id) { (Job.last&.id || 0) + 1 }
+  let(:record_class)   { Spec::Manufacturer }
+  let(:invalid_job_id) { (Spec::Manufacturer.last&.id || 0) + 1 }
 
   describe '::new' do
     it { expect(described_class).to be_constructible.with(1).argument }
@@ -67,7 +67,7 @@ RSpec.describe Operations::Records::FindOne do
 
     context 'when there are many records' do
       let!(:records) do
-        Array.new(3) { FactoryBot.create(:job) }
+        Array.new(3) { FactoryBot.create(:manufacturer) }
       end
 
       describe 'with an invalid primary key' do

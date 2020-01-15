@@ -11,7 +11,7 @@ RSpec.describe Operations::Records::Save do
 
   subject(:operation) { described_class.new(record_class) }
 
-  let(:record_class) { Job }
+  let(:record_class) { Spec::Manufacturer }
 
   describe '::new' do
     it { expect(described_class).to be_constructible.with(1).argument }
@@ -37,22 +37,8 @@ RSpec.describe Operations::Records::Save do
     describe 'with a record with valid attributes' do
       let(:attributes) do
         {
-          action_required:    false,
-          application_active: true,
-          application_status: 'interviewing',
-          company_name:       'Umbrella Corp',
-          data:               {
-            'events' => [
-              { 'type' => 'viewed_listing' },
-              { 'type' => 'application_sent' },
-              { 'type' => 'interview_scheduled' }
-            ]
-          },
-          notes:              'BYO-Biohazard Suit',
-          source:             'PlayStation',
-          source_data:        { 'publisher' => 'Capcom' },
-          time_period:        '2020-01',
-          title:              'Test Subject'
+          'name'       => 'Umbrella Corp',
+          'founded_at' => '1996-03-02'
         }
       end
 

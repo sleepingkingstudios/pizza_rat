@@ -1,4 +1,6 @@
-<% job = data['job'] %>
+<% job = data.fetch('job') %>
+<% time_periods = data.fetch('time_periods', []) %>
+<% time_period_data = time_periods.map { |tp| [tp.formatted, tp.id] } %>
 
 <%= form_with model: job, scope: :job, local: true do |form| %>
   <% if job.errors.any? %>
@@ -14,8 +16,8 @@
   <% end %>
 
   <p>
-    <%= form.label :time_period, 'Time Period' %>
-    <%= form.text_field :time_period %>
+    <%= form.label :time_period_id, 'Time Period' %>
+    <%= form.select :time_period_id, options_for_select(time_period_data) %>
   </p>
 
   <p>

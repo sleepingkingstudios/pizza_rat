@@ -11,7 +11,7 @@ RSpec.describe Operations::Records::Update do
 
   subject(:operation) { described_class.new(record_class) }
 
-  let(:record_class) { Job }
+  let(:record_class) { Spec::Manufacturer }
 
   describe '::new' do
     it { expect(described_class).to be_constructible.with(1).argument }
@@ -20,7 +20,7 @@ RSpec.describe Operations::Records::Update do
   describe '#call' do
     let(:attributes) { {} }
     let(:expected)   { record_class.new.attributes }
-    let(:record)     { record_class.new }
+    let(:record)     { FactoryBot.create(:manufacturer) }
 
     def call_operation
       operation.call(record, attributes)
@@ -31,8 +31,6 @@ RSpec.describe Operations::Records::Update do
     include_examples 'should validate the attributes'
 
     include_examples 'should validate the record'
-
-    # rubocop:disable RSpec/RepeatedExample
     include_examples 'should handle invalid attributes',
       lambda {
         it 'should update the attributes' do
@@ -40,38 +38,22 @@ RSpec.describe Operations::Records::Update do
             .to change(record, :attributes)
             .to be >= attributes.stringify_keys
         end
-
-        it { expect { call_operation }.not_to change(record, :persisted?) }
       }
 
     include_examples 'should handle unknown attributes',
       lambda {
         it { expect { call_operation }.not_to change(record, :attributes) }
-
-        it { expect { call_operation }.not_to change(record, :persisted?) }
       }
-    # rubocop:enable RSpec/RepeatedExample
 
     describe 'with a record with valid attributes' do
       let(:attributes) do
         {
-          'action_required'    => false,
-          'application_active' => true,
-          'application_status' => 'interviewing',
-          'company_name'       => 'Umbrella Corp',
-          'data'               => {
-            'events' => [
-              { 'type' => 'viewed_listing' },
-              { 'type' => 'application_sent' },
-              { 'type' => 'interview_scheduled' }
-            ]
-          },
-          'notes'              => 'BYO-Biohazard Suit',
-          'source'             => 'PlayStation',
-          'source_data'        => { 'publisher' => 'Capcom' },
-          'time_period'        => '2020-01',
-          'title'              => 'Test Subject'
+          'name'       => 'Umbrella Corp',
+          'founded_at' => '1996-03-02'
         }
+      end
+      let(:expected) do
+        attributes.merge('founded_at' => Date.parse(attributes['founded_at']))
       end
 
       it { expect(call_operation).to have_passing_result.with_value(record) }
@@ -79,10 +61,8 @@ RSpec.describe Operations::Records::Update do
       it 'should update the attributes' do
         expect { call_operation }
           .to change(record, :attributes)
-          .to be >= attributes
+          .to be >= expected
       end
-
-      it { expect { call_operation }.to change(record, :persisted?).to be true }
     end
   end
 

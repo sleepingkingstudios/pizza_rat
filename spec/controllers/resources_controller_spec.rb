@@ -10,17 +10,20 @@ RSpec.describe ResourcesController, type: :controller do
   subject(:controller) { described_class.new }
 
   shared_context 'when the controller defines a resource' do
-    let(:resource) { Resource.new(Job) }
+    let(:resource) { Resource.new(Spec::Manufacturer) }
     let(:resource_params) do
       {
-        'company_name' => 'Weyland-Yutani',
-        'source'       => '20th Century Fox',
-        'time_period'  => '2020-01',
-        'title'        => 'Freighter Crew'
+        'name'       => 'Umbrella Corp',
+        'founded_at' => '1996-03-02'
       }
     end
+    let(:expected_attributes) do
+      resource_params.merge(
+        'founded_at' => Date.parse(resource_params['founded_at'])
+      )
+    end
     let(:permitted_attributes) do
-      %w[company_name source time_period title]
+      %w[name founded_at]
     end
 
     before(:example) do
@@ -56,7 +59,7 @@ RSpec.describe ResourcesController, type: :controller do
 
     def a_resource_with_expected_attributes
       an_instance_of(resource.record_class || Object)
-        .and(satisfy { |obj| obj.attributes >= resource_params })
+        .and(satisfy { |obj| obj.attributes >= expected_attributes })
     end
 
     it 'should define the private method' do
@@ -98,7 +101,7 @@ RSpec.describe ResourcesController, type: :controller do
     include_context 'when the controller defines a resource'
     include_context 'with a params hash'
 
-    let(:object) { FactoryBot.create(:job) }
+    let(:object) { FactoryBot.create(:manufacturer) }
     let(:params) { { 'id' => object.id } }
 
     it 'should define the private method' do
@@ -130,7 +133,7 @@ RSpec.describe ResourcesController, type: :controller do
     include_context 'when the controller defines a resource'
     include_context 'with a params hash'
 
-    let(:object) { FactoryBot.create(:job) }
+    let(:object) { FactoryBot.create(:manufacturer) }
     let(:params) { { 'id' => object.id } }
 
     it 'should define the private method' do
@@ -261,7 +264,7 @@ RSpec.describe ResourcesController, type: :controller do
     end
 
     context 'when there are many resources' do
-      let!(:objects) { Array.new(3) { FactoryBot.create(:job) } }
+      let!(:objects) { Array.new(3) { FactoryBot.create(:manufacturer) } }
 
       it 'should return the matching resource instances' do
         expect(controller.send(:index_resources))
@@ -270,7 +273,7 @@ RSpec.describe ResourcesController, type: :controller do
       end
 
       context 'when params[:order] is set' do
-        let(:order)  { 'company_name:asc' }
+        let(:order)  { 'name:asc' }
         let(:params) { super().merge(order: order) }
 
         it 'should call step :normalize_sort' do
@@ -282,13 +285,13 @@ RSpec.describe ResourcesController, type: :controller do
         it 'should call step operation_factory::FindMatching' do
           expect { controller.send(:index_resources) }
             .to call_command_step(resource.operation_factory::FindMatching)
-            .with_arguments(order: { 'company_name' => 'asc' })
+            .with_arguments(order: { 'name' => 'asc' })
         end
 
         it 'should return the matching resource instances' do
           expect(controller.send(:index_resources))
             .to be_a_passing_result
-            .with_value(objects.sort_by(&:company_name))
+            .with_value(objects.sort_by(&:name))
         end
       end
     end
@@ -312,7 +315,7 @@ RSpec.describe ResourcesController, type: :controller do
     it 'should return the instance of the resource' do
       expect(controller.send(:new_resource))
         .to be_a_passing_result
-        .with_value(an_instance_of(Job))
+        .with_value(an_instance_of(Spec::Manufacturer))
     end
   end
 
@@ -467,7 +470,7 @@ RSpec.describe ResourcesController, type: :controller do
     wrap_context 'when the controller defines a resource' do
       let(:expected_error) do
         Errors::InvalidParameters.new(
-          errors: [['job', "can't be blank"]]
+          errors: [['manufacturer', "can't be blank"]]
         )
       end
 
@@ -548,7 +551,7 @@ RSpec.describe ResourcesController, type: :controller do
     include_context 'when the controller defines a resource'
     include_context 'with a params hash'
 
-    let(:object) { FactoryBot.create(:job) }
+    let(:object) { FactoryBot.create(:manufacturer) }
     let(:params) { { 'id' => object.id } }
 
     it 'should define the private method' do
@@ -589,15 +592,15 @@ RSpec.describe ResourcesController, type: :controller do
     include_context 'when the controller defines a resource'
     include_context 'with a params hash'
 
-    let(:object) { FactoryBot.create(:job) }
+    let(:object) { FactoryBot.create(:manufacturer) }
     let(:params) do
       { 'id' => object.id, resource.singular_name => resource_params }
     end
 
     def the_resource_with_updated_attributes
-      an_instance_of(Job)
+      an_instance_of(Spec::Manufacturer)
         .and(satisfy { |obj| obj.id == object.id })
-        .and(satisfy { |obj| obj.attributes >= resource_params })
+        .and(satisfy { |obj| obj.attributes >= expected_attributes })
     end
 
     it 'should define the private method' do

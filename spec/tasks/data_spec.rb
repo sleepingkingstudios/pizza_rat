@@ -44,7 +44,7 @@ RSpec.describe 'rake' do # rubocop:disable RSpec/DescribeClass
     end
 
     context 'when all of the data exists' do
-      let(:record_classes) { [Job] }
+      let(:record_classes) { [TimePeriod, Job] }
 
       before(:example) do
         allow(Fixtures).to receive(:exist?).and_return(true)
@@ -87,7 +87,7 @@ RSpec.describe 'rake' do # rubocop:disable RSpec/DescribeClass
     end
 
     context 'when all of the data exists' do
-      let(:record_classes) { [Job] }
+      let(:record_classes) { [TimePeriod, Job] }
 
       before(:example) do
         allow(Fixtures).to receive(:exist?).and_return(true)

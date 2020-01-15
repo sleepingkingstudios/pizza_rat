@@ -36,40 +36,15 @@ class Job < ApplicationRecord
   attribute :application_status, :string, default: ApplicationStatuses::PROSPECT
   attribute :company_name,       :string, default: ''
 
+  ### Associations
+  belongs_to :time_period
+
   ### Validations
   validates :application_status,
     inclusion: { allow_nil: true, in: ApplicationStatuses.all.values },
     presence:  true
   validates :company_name, presence: true
   validates :source,       presence: true
-  validates :time_period,
-    format:   {
-      message: 'must be in YYYY-MM format',
-      with:    TIME_PERIOD_FORMAT
-    },
-    presence: true
-  validates :time_period_month,
-    numericality: {
-      greater_than_or_equal_to: 1,
-      less_than_or_equal_to:    12,
-      only_integer:             true,
-      unless:                   -> { errors.key?(:time_period) }
-    }
-  validates :time_period_year,
-    numericality: {
-      greater_than: 2009,
-      less_than:    2030,
-      only_integer: true,
-      unless:       -> { errors.key?(:time_period) }
-    }
-
-  def time_period_month
-    time_period&.split('-')&.last
-  end
-
-  def time_period_year
-    time_period&.split('-')&.first
-  end
 end
 
 # == Schema Information
@@ -85,14 +60,19 @@ end
 #  notes              :text             default(""), not null
 #  source             :string           not null
 #  source_data        :jsonb            not null
-#  time_period        :string           not null
 #  title              :string           default(""), not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#  time_period_id     :bigint
 #
 # Indexes
 #
 #  index_jobs_on_action_required_and_company_name     (action_required,company_name)
 #  index_jobs_on_application_status_and_company_name  (application_status,company_name)
 #  index_jobs_on_company_name                         (company_name)
+#  index_jobs_on_time_period_id                       (time_period_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (time_period_id => time_periods.id)
 #

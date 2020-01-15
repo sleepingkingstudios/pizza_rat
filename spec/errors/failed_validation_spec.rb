@@ -7,8 +7,10 @@ require 'errors/failed_validation'
 RSpec.describe Errors::FailedValidation do
   subject(:error) { described_class.new(record: record) }
 
-  let(:attributes)   { FactoryBot.attributes_for(:job, company_name: nil) }
-  let(:record_class) { Job }
+  let(:attributes) do
+    FactoryBot.attributes_for(:manufacturer, name: nil)
+  end
+  let(:record_class) { Spec::Manufacturer }
   let(:record)       { record_class.new(attributes).tap(&:valid?) }
 
   describe '::TYPE' do
@@ -28,7 +30,7 @@ RSpec.describe Errors::FailedValidation do
     let(:expected) do
       {
         'data'    => {
-          'errors'       => [['company_name', "can't be blank"]],
+          'errors'       => [['name', "can't be blank"]],
           'record_class' => record_class.name
         },
         'message' => error.message,
@@ -45,33 +47,31 @@ RSpec.describe Errors::FailedValidation do
     include_examples 'should have reader', :errors
 
     context 'when the record errors are empty' do
-      let(:attributes) { FactoryBot.attributes_for(:job) }
+      let(:attributes) { FactoryBot.attributes_for(:manufacturer) }
 
       it { expect(error.errors).to be == [] }
     end
 
     context 'when the record has one error' do
       let(:attributes) do
-        FactoryBot.attributes_for(:job, company_name: nil)
+        FactoryBot.attributes_for(:manufacturer, name: nil)
       end
 
-      it { expect(error.errors).to be == [['company_name', "can't be blank"]] }
+      it { expect(error.errors).to be == [['name', "can't be blank"]] }
     end
 
     context 'when the record has many errors' do
       let(:attributes) do
         FactoryBot.attributes_for(
-          :job,
-          company_name: nil,
-          source:       '',
-          time_period:  'the distant future'
+          :manufacturer,
+          founded_at: nil,
+          name:       nil
         )
       end
       let(:expected) do
         [
-          ['company_name', "can't be blank"],
-          ['source',       "can't be blank"],
-          ['time_period',  'must be in YYYY-MM format']
+          ['founded_at', "can't be blank"],
+          ['name',       "can't be blank"]
         ]
       end
 
@@ -85,16 +85,16 @@ RSpec.describe Errors::FailedValidation do
     include_examples 'should have reader', :message
 
     context 'when the record errors are empty' do
-      let(:attributes) { FactoryBot.attributes_for(:job) }
+      let(:attributes) { FactoryBot.attributes_for(:manufacturer) }
 
       it { expect(error.message).to be == expected }
     end
 
     context 'when the record has one error' do
       let(:attributes) do
-        FactoryBot.attributes_for(:job, company_name: nil)
+        FactoryBot.attributes_for(:manufacturer, name: nil)
       end
-      let(:expected) { "#{super()}: company_name can't be blank" }
+      let(:expected) { "#{super()}: name can't be blank" }
 
       it { expect(error.message).to be == expected }
     end
@@ -102,15 +102,13 @@ RSpec.describe Errors::FailedValidation do
     context 'when the record has many errors' do
       let(:attributes) do
         FactoryBot.attributes_for(
-          :job,
-          company_name: nil,
-          source:       '',
-          time_period:  'the distant future'
+          :manufacturer,
+          founded_at: nil,
+          name:       nil
         )
       end
       let(:expected) do
-        "#{super()}: company_name can't be blank, source can't be blank," \
-        ' time_period must be in YYYY-MM format'
+        "#{super()}: founded_at can't be blank, name can't be blank"
       end
 
       it { expect(error.message).to be == expected }

@@ -3,7 +3,7 @@
 require 'fixtures'
 
 namespace :data do
-  data_classes = %w[Job]
+  data_classes = %w[TimePeriod Job]
 
   namespace :load do
     desc 'Loads the data from /data/fixtures into the database'

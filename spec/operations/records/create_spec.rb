@@ -11,7 +11,7 @@ RSpec.describe Operations::Records::Create do
 
   subject(:operation) { described_class.new(record_class) }
 
-  let(:record_class) { Job }
+  let(:record_class) { Spec::Manufacturer }
 
   describe '::new' do
     it { expect(described_class).to be_constructible.with(1).argument }
@@ -30,24 +30,18 @@ RSpec.describe Operations::Records::Create do
 
     include_examples 'should validate the attributes'
 
-    # rubocop:disable RSpec/RepeatedExample
     include_examples 'should handle invalid attributes',
       lambda {
-        it { expect { call_operation }.not_to change(Job, :count) }
+        it 'should not create the record' do
+          expect { call_operation }.not_to change(Spec::Manufacturer, :count)
+        end
       }
-
-    include_examples 'should handle unknown attributes',
-      lambda {
-        it { expect { call_operation }.not_to change(Job, :count) }
-      }
-    # rubocop:enable RSpec/RepeatedExample
 
     describe 'with a hash with valid attributes' do
       let(:attributes) do
         {
-          'company_name' => 'Umbrella Corp',
-          'source'       => 'PlayStation',
-          'time_period'  => '2020-01'
+          'name'       => 'Umbrella Corp',
+          'founded_at' => '1996-03-02'
         }
       end
       let(:expected) do
@@ -56,6 +50,12 @@ RSpec.describe Operations::Records::Create do
           .merge(
             'id'         => an_instance_of(Integer),
             'created_at' => an_instance_of(ActiveSupport::TimeWithZone),
+            'founded_at' => an_instance_of(ActiveSupport::TimeWithZone)
+              .and(
+                satisfy do |date|
+                  date.to_date.iso8601 == attributes['founded_at']
+                end
+              ),
             'updated_at' => an_instance_of(ActiveSupport::TimeWithZone)
           )
       end
@@ -68,7 +68,9 @@ RSpec.describe Operations::Records::Create do
 
       it { expect(record.persisted?).to be true }
 
-      it { expect { call_operation }.to change(Job, :count).by(1) }
+      it 'should create the record' do
+        expect { call_operation }.to change(Spec::Manufacturer, :count).by(1)
+      end
     end
   end
 
