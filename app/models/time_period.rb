@@ -5,6 +5,9 @@ require 'operations/records/factory'
 # A TimePeriod represents a discrete search interval, starting with the given
 # month and year.
 class TimePeriod < ApplicationRecord
+  STRING_FORMAT = '%<year>02i-%<month>02i'
+  private_constant :STRING_FORMAT
+
   Factory = Operations::Records::Factory.new(self)
 
   def self.active
@@ -32,6 +35,10 @@ class TimePeriod < ApplicationRecord
       unless:                   ->(record) { record.year.blank? }
     },
     presence:     true
+
+  def formatted
+    format(STRING_FORMAT, month: month, year: year)
+  end
 end
 
 # == Schema Information

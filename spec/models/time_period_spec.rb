@@ -59,6 +59,18 @@ RSpec.describe TimePeriod, type: :model do
     include_examples 'should have reader', :created_at
   end
 
+  describe '#formatted' do
+    let(:expected) do
+      format(
+        '%<year>02i-%<month>02i',
+        month: time_period.month,
+        year:  time_period.year
+      )
+    end
+
+    include_examples 'should have reader', :formatted, -> { be == expected }
+  end
+
   describe '#id' do
     include_examples 'should have attribute',
       :id,
