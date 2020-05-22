@@ -13,7 +13,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'pg', '>= 0.18', '< 2.0' # Use postgresql as the database for Active Record
 
 # Use Puma as the app server
-gem 'puma', '~> 4.1'
+gem 'puma', '~> 4.3'
 
 # SASS and stylesheet assets.
 gem 'bitters', '~> 2.0'
