@@ -1,6 +1,6 @@
 # Build Options
 language: ruby
-rvm: 2.6.5
+rvm: 2.7.2
 install:
   - bundle install
   - nvm install 12.13.0
