@@ -4,7 +4,6 @@
       <td>Status</td>
       <td>Company Name</td>
       <td>Title</td>
-      <td>Source</td>
       <td>&nbsp;</td>
     </tr>
   </thead>
@@ -12,7 +11,7 @@
   <tbody>
     <% if data['jobs'].blank? %>
       <tr>
-        <td colspan="5">There are no jobs defined.</td>
+        <td colspan="4">There are no jobs defined.</td>
       </tr>
     <% end %>
 
@@ -30,7 +29,6 @@
             <span class="text-muted">No Title</span>
           <% end %>
         </td>
-        <td><%= job.source %></td>
         <td>
           <%= link_to 'Show',   job_path(job) %>
           <%= link_to 'Edit',   edit_job_path(job) %>

@@ -5,6 +5,7 @@ FactoryBot.define do
   factory :job, class: 'Job' do
     sequence(:company_name) { |index| "Company #{index}" }
 
+    job_type    { Job::JobTypes::FULL_TIME }
     source      { 'Internet' }
     source_data { { 'url' => 'https://www.example.com' } }
     time_period { nil }
@@ -53,6 +54,10 @@ FactoryBot.define do
       end
     end
 
+    trait :contract do
+      job_type { Job::JobTypes::CONTRACT }
+    end
+
     trait :interviewing do
       application_status { Job::ApplicationStatuses::INTERVIEWING }
 
@@ -91,6 +96,11 @@ FactoryBot.define do
           ]
         }
       end
+    end
+
+    trait :with_recruiter do
+      recruiter_agency { 'Recruiter Agency 0' }
+      recruiter_name   { 'Recruiter 0' }
     end
 
     trait :with_time_period do

@@ -14,9 +14,23 @@
 </p>
 
 <p>
+  <strong>Type:</strong>
+  <%= job.job_type.titleize %>
+</p>
+
+<p>
   <strong>Source:</strong>
   <%= job.source %>
 </p>
+
+<% if job.recruiter_name.present? %>
+  <p>
+    <strong>Recruiter:</strong>
+    <%= job.recruiter_name %>
+    <% if job.recruiter_agency.present? %>
+      (<%= job.recruiter_agency %>)
+    <% end %>
+<% end %>
 
 <p>
   <strong>Time Period:</strong>

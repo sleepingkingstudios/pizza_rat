@@ -8,7 +8,10 @@ class JobsController < ResourcesController
     application_status
     company_name
     data
+    job_type
     notes
+    recruiter_agency
+    recruiter_name
     source
     source_data
     time_period_id
@@ -17,6 +20,10 @@ class JobsController < ResourcesController
   private_constant :PERMITTED_ATTRIBUTES
 
   private
+
+  def find_job_types
+    resources['job_types'] = Job::JobTypes.all.values
+  end
 
   def find_time_periods
     resources['time_periods'] = TimePeriod::Factory.find_matching.call.value
@@ -29,6 +36,7 @@ class JobsController < ResourcesController
   def create_resource
     result = super
 
+    find_job_types    unless result.success?
     find_time_periods unless result.success?
 
     result
@@ -38,6 +46,7 @@ class JobsController < ResourcesController
     steps do
       job = step super
 
+      find_job_types
       find_time_periods
 
       job
@@ -48,6 +57,7 @@ class JobsController < ResourcesController
     steps do
       job = step super
 
+      find_job_types
       find_time_periods
 
       job
@@ -65,6 +75,7 @@ class JobsController < ResourcesController
   def update_resource
     result = super
 
+    find_job_types    unless result.success?
     find_time_periods unless result.success?
 
     result

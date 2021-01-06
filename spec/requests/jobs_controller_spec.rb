@@ -123,6 +123,7 @@ RSpec.describe JobsController, type: :request do
       let(:job_attributes) do
         {
           'company_name'   => nil,
+          'job_type'       => Job::JobTypes::FULL_TIME,
           'source'         => '20th Century Fox',
           'time_period_id' => time_periods.first.id,
           'title'          => 'Freighter Crew'
@@ -160,6 +161,7 @@ RSpec.describe JobsController, type: :request do
       let(:job_attributes) do
         {
           'company_name'   => 'Weyland-Yutani',
+          'job_type'       => Job::JobTypes::FULL_TIME,
           'source'         => '20th Century Fox',
           'time_period_id' => time_periods.first.id,
           'title'          => 'Freighter Crew'

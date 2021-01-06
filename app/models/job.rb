@@ -15,6 +15,12 @@ class Job < ApplicationRecord
     PROSPECT:     'prospect'
   ).freeze
 
+  JobTypes = SleepingKingStudios::Tools::Toolbox::ConstantMap.new(
+    CONTRACT:  'contract',
+    FULL_TIME: 'full_time',
+    PART_TIME: 'part_time'
+  ).freeze
+
   Factory = Operations::Records::Factory.new(self)
 
   TIME_PERIOD_FORMAT = /\A\d{4}-\d{2}\z/.freeze
@@ -43,6 +49,9 @@ class Job < ApplicationRecord
   validates :application_status,
     inclusion: { allow_nil: true, in: ApplicationStatuses.all.values },
     presence:  true
+  validates :job_type,
+    inclusion: { allow_nil: true, in: JobTypes.all.values },
+    presence:  true
   validates :company_name, presence: true
   validates :source,       presence: true
 end
@@ -57,7 +66,10 @@ end
 #  application_status :string           not null
 #  company_name       :string           not null
 #  data               :jsonb            not null
+#  job_type           :string           default(""), not null
 #  notes              :text             default(""), not null
+#  recruiter_agency   :string           default(""), not null
+#  recruiter_name     :string           default(""), not null
 #  source             :string           not null
 #  source_data        :jsonb            not null
 #  title              :string           default(""), not null
