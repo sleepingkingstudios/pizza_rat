@@ -4,20 +4,20 @@ source 'https://rubygems.org'
 
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.6.5'
+ruby '2.7.2'
 
-gem 'rails', '~> 6.0.1'
+gem 'rails', '~> 6.0.3'
 
 gem 'annotate', '~> 3.0' # https://github.com/ctran/annotate_models
 gem 'bcrypt', '~> 3.1.7'
 gem 'pg', '>= 0.18', '< 2.0' # Use postgresql as the database for Active Record
 
 # Use Puma as the app server
-gem 'puma', '~> 4.1'
+gem 'puma', '~> 4.3'
 
 # SASS and stylesheet assets.
-gem 'bitters', '~> 2.0'
-gem 'bourbon', '~> 6.0'
+gem 'bitters', '~> 2.0', '>= 2.0.4'
+gem 'bourbon', '~> 7.0'
 gem 'sassc-rails', '~> 2.1'
 
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker

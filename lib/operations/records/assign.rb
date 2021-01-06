@@ -7,7 +7,9 @@ module Operations::Records
   class Assign < Operations::Records::Base
     private
 
-    def process(record, attributes)
+    def process(record, attributes = {}, **keywords)
+      attributes = attributes.merge(**keywords) if attributes.is_a?(Hash)
+
       step :handle_invalid_attributes, attributes
       step :handle_invalid_record,     record
 

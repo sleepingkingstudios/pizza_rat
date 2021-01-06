@@ -17,7 +17,7 @@
 .byebug_history
 
 # Ignore master key for decrypting credentials and more.
-/config/credentials/test.key
+/config/credentials/*.key
 /config/master.key
 
 # Ignore Javascript modules and compiled files.
@@ -38,3 +38,5 @@ yarn-debug.log*
 /doc/*
 .yardoc
 .yardopts
+
+/config/credentials/test.key
