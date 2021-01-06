@@ -5,6 +5,7 @@
   application_active: true
   application_status: interviewing
   company_name:       Umbrella Corp
+  job_type:           part_time
   notes:              BYO-Biohazard Suit
   source:             PlayStation
   source_data:        { publisher: Capcom }
@@ -20,6 +21,7 @@
   application_active: true
   application_status: applied
   company_name:       Weyland-Yutani
+  job_type:           full_time
   notes:              A job with heart
   source:             IMDB
   source_data:        { producer: 'Ridley Scott' }
@@ -33,7 +35,10 @@
   application_active: false
   application_status: closed
   company_name:       Raccoon City PD
+  job_type:           contract
   notes:              Need warm bodies for some reason
+  recruiter_agency:   Nemesis Project
+  recruiter_name:     William Birkin
   source:             PlayStation
   source_data:        { publisher: 'Capcom' }
   title:              Officer

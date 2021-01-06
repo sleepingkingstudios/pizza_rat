@@ -1,6 +1,8 @@
 <% job = data.fetch('job') %>
 <% time_periods = data.fetch('time_periods', []) %>
 <% time_period_data = time_periods.map { |tp| [tp.formatted, tp.id] } %>
+<% job_types = data.fetch('job_types', []) %>
+<% job_type_data = job_types.map { |type| [type.titleize, type] } %>
 
 <%= form_with model: job, scope: :job, local: true do |form| %>
   <% if job.errors.any? %>
@@ -21,6 +23,11 @@
   </p>
 
   <p>
+    <%= form.label :job_type, 'Job Type' %>
+    <%= form.select :job_type, options_for_select(job_type_data) %>
+  </p>
+
+  <p>
     <%= form.label :company_name, 'Company Name' %>
     <%= form.text_field :company_name %>
   </p>
@@ -33,6 +40,16 @@
   <p>
     <%= form.label :source %>
     <%= form.text_field :source %>
+  </p>
+
+  <p>
+    <%= form.label :recruiter_name, 'Recruiter Name' %>
+    <%= form.text_field :recruiter_name %>
+  </p>
+
+  <p>
+    <%= form.label :recruiter_agency, 'Recruiter Agency' %>
+    <%= form.text_field :recruiter_agency %>
   </p>
 
   <p>

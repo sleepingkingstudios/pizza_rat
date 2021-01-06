@@ -13,6 +13,7 @@ RSpec.describe JobsController, type: :controller do
   let(:resource_params) do
     {
       'company_name'   => 'Weyland-Yutani',
+      'job_type'       => Job::JobTypes::FULL_TIME,
       'source'         => '20th Century Fox',
       'time_period_id' => time_period.id,
       'title'          => 'Freighter Crew'
@@ -247,7 +248,10 @@ RSpec.describe JobsController, type: :controller do
         application_status
         company_name
         data
+        job_type
         notes
+        recruiter_agency
+        recruiter_name
         source
         source_data
         time_period_id

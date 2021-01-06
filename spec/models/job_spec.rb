@@ -32,6 +32,7 @@ RSpec.describe Job, type: :model do
           { 'type' => 'interview_scheduled' }
         ]
       },
+      job_type:           described_class::JobTypes::FULL_TIME,
       notes:              'BYO-Biohazard Suit',
       source:             'PlayStation',
       source_data:        { 'publisher' => 'Capcom' },
@@ -79,6 +80,41 @@ RSpec.describe Job, type: :model do
       it 'should store the value' do
         expect(described_class::ApplicationStatuses::PROSPECT)
           .to be == 'prospect'
+      end
+    end
+  end
+
+  describe '::JobTypes' do
+    let(:expected_types) do
+      {
+        CONTRACT:  'contract',
+        FULL_TIME: 'full_time',
+        PART_TIME: 'part_time'
+      }
+    end
+
+    include_examples 'should define immutable constant', :JobTypes
+
+    it 'should enumerate the statuses' do
+      expect(described_class::JobTypes.all)
+        .to be == expected_types
+    end
+
+    describe '::CONTRACT' do
+      it 'should store the value' do
+        expect(described_class::JobTypes::CONTRACT).to be == 'contract'
+      end
+    end
+
+    describe '::FULL_TIME' do
+      it 'should store the value' do
+        expect(described_class::JobTypes::FULL_TIME).to be == 'full_time'
+      end
+    end
+
+    describe '::PART_TIME' do
+      it 'should store the value' do
+        expect(described_class::JobTypes::PART_TIME).to be == 'part_time'
       end
     end
   end
@@ -263,8 +299,26 @@ RSpec.describe Job, type: :model do
     end
   end
 
+  describe '#job_type' do
+    include_examples 'should have attribute', :job_type, default: ''
+  end
+
   describe '#notes' do
     include_examples 'should have attribute', :notes, default: ''
+  end
+
+  describe '#recruiter_agency' do
+    include_examples 'should have attribute',
+      :recruiter_agency,
+      default: '',
+      value:   'People Procurement Inc.'
+  end
+
+  describe '#recruiter_name' do
+    include_examples 'should have attribute',
+      :recruiter_name,
+      default: '',
+      value:   'Jane Recruiter'
   end
 
   describe '#source' do
@@ -317,6 +371,14 @@ RSpec.describe Job, type: :model do
     include_examples 'should validate the presence of',
       :company_name,
       type: String
+
+    include_examples 'should validate the presence of',
+      :job_type,
+      type: String
+
+    include_examples 'should validate the inclusion of',
+      :job_type,
+      in: described_class::JobTypes.all.values
 
     include_examples 'should validate the presence of',
       :source,
