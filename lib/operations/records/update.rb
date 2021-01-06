@@ -24,7 +24,9 @@ module Operations::Records
 
     attr_reader :save_operation
 
-    def process(record, attributes)
+    def process(record, attributes = {}, **keywords)
+      attributes = attributes.merge(**keywords) if attributes.is_a?(Hash)
+
       step assign_operation.call(record, attributes)
 
       save_operation.call(record)
